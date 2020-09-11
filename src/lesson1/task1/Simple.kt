@@ -3,6 +3,7 @@
 package lesson1.task1
 
 import kotlin.math.*
+import kotlin.math.PI
 
 // Урок 1: простые функции
 // Максимальное количество баллов = 5
@@ -84,7 +85,7 @@ fun lengthInMeters(sagenes: Int, arshins: Int, vershoks: Int): Double =
  * Вывести значение того же угла в радианах (например, 0.63256).
  */
 fun angleInRadian(deg: Int, min: Int, sec: Int): Double =
-    deg * Math.PI / 180 + min * Math.PI / (60 * 180) + sec * Math.PI / (3600 * 180)
+    deg * PI / 180 + min * PI / (60 * 180) + sec * PI / (3600 * 180)
 
 /**
  * Тривиальная (1 балл)
@@ -120,7 +121,7 @@ fun travelMinutes(hoursDepart: Int, minutesDepart: Int, hoursArrive: Int, minute
  * Например, 100 рублей под 10% годовых превратятся в 133.1 рубля
  */
 fun accountInThreeYears(initial: Int, percent: Int): Double {
-    val multiplier: Double = 1 + percent / 100.0
+    val multiplier = 1 + percent / 100.0
     return initial * multiplier * multiplier * multiplier
 }
 
