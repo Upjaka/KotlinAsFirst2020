@@ -88,21 +88,38 @@ fun digitNumber(n: Int): Int {
  * Найти число Фибоначчи из ряда 1, 1, 2, 3, 5, 8, 13, 21, ... с номером n.
  * Ряд Фибоначчи определён следующим образом: fib(1) = 1, fib(2) = 1, fib(n+2) = fib(n) + fib(n+1)
  */
-fun fib(n: Int): Int = TODO()
+fun fib(n: Int): Int {
+    return if (n < 3) 1
+    else return fib(n - 1) + fib(n - 2)
+}
 
 /**
  * Простая (2 балла)
  *
  * Для заданного числа n > 1 найти минимальный делитель, превышающий 1
  */
-fun minDivisor(n: Int): Int = TODO()
+fun minDivisor(n: Int): Int {
+    var result = 1
+    while (result < n) {
+        result++
+        if (n % result == 0) return result
+    }
+    return result
+}
 
 /**
  * Простая (2 балла)
  *
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
-fun maxDivisor(n: Int): Int = TODO()
+fun maxDivisor(n: Int): Int {
+    var result = n
+    while (result > 1) {
+        result--
+        if (n % result == 0) return result
+    }
+    return result
+}
 
 /**
  * Простая (2 балла)
@@ -120,7 +137,15 @@ fun maxDivisor(n: Int): Int = TODO()
  * Написать функцию, которая находит, сколько шагов требуется для
  * этого для какого-либо начального X > 0.
  */
-fun collatzSteps(x: Int): Int = TODO()
+fun collatzSteps(x: Int): Int {
+    var result = 0
+    var number = x
+    while (number != 1) {
+        number = if (number % 2 == 0) number / 2 else 3 * number + 1
+        result++
+    }
+    return result
+}
 
 /**
  * Средняя (3 балла)
