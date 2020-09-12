@@ -90,7 +90,19 @@ fun digitNumber(n: Int): Int {
  */
 fun fib(n: Int): Int {
     return if (n < 3) 1
-    else return fib(n - 1) + fib(n - 2)
+    else {
+        var term1 = 1
+        var term2 = 1
+        var index = 3
+        var temp: Int
+        while (index < n) {
+            temp = term2
+            term2 += term1
+            term1 = temp
+            index++
+        }
+        term1 + term2
+    }
 }
 
 /**
