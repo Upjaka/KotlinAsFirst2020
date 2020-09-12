@@ -2,7 +2,8 @@
 
 package lesson3.task1
 
-import kotlin.math.sqrt
+import lesson1.task1.sqr
+import kotlin.math.*
 
 // Урок 3: циклы
 // Максимальное количество баллов = 9
@@ -165,7 +166,16 @@ fun collatzSteps(x: Int): Int {
  * Для заданных чисел m и n найти наименьшее общее кратное, то есть,
  * минимальное число k, которое делится и на m и на n без остатка
  */
-fun lcm(m: Int, n: Int): Int = TODO()
+fun lcm(m: Int, n: Int): Int {
+    var result = if (m > n) m else n
+    while (result % m != 0 || result % n != 0) {
+        if (result > m * n / 2.0) {
+            return m * n
+        }
+        result++
+    }
+    return result
+}
 
 /**
  * Средняя (3 балла)
@@ -174,7 +184,13 @@ fun lcm(m: Int, n: Int): Int = TODO()
  * Взаимно простые числа не имеют общих делителей, кроме 1.
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
-fun isCoPrime(m: Int, n: Int): Boolean = TODO()
+fun isCoPrime(m: Int, n: Int): Boolean {
+    val max = if (m > n) m else n
+    for (i in 2..max / 2) {
+        if (m % i == 0 && n % i == 0) return false
+    }
+    return true
+}
 
 /**
  * Средняя (3 балла)
@@ -183,7 +199,11 @@ fun isCoPrime(m: Int, n: Int): Boolean = TODO()
  * то есть, существует ли такое целое k, что m <= k*k <= n.
  * Например, для интервала 21..28 21 <= 5*5 <= 28, а для интервала 51..61 квадрата не существует.
  */
-fun squareBetweenExists(m: Int, n: Int): Boolean = TODO()
+fun squareBetweenExists(m: Int, n: Int): Boolean {
+    val minSquare = ceil(sqrt(m.toDouble()))
+    val maxSquare = floor(sqrt(n.toDouble()))
+    return (maxSquare - minSquare >= 0)
+}
 
 /**
  * Средняя (3 балла)
@@ -192,7 +212,15 @@ fun squareBetweenExists(m: Int, n: Int): Boolean = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun revert(n: Int): Int = TODO()
+fun revert(n: Int): Int {
+    var result = n % 10
+    var number = n / 10
+    while (number != 0) {
+        result = result * 10 + number % 10
+        number /= 10
+    }
+    return result
+}
 
 /**
  * Средняя (3 балла)
@@ -203,7 +231,21 @@ fun revert(n: Int): Int = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun isPalindrome(n: Int): Boolean = TODO()
+fun isPalindrome(n: Int): Boolean {
+    val digitNumber = digitNumber(n)
+    for (i in 1..digitNumber / 2) {
+        if (getDigit(n, i) != getDigit(n, digitNumber - i + 1)) return false
+    }
+    return true
+}
+
+fun getDigit(number: Int, index: Int): Int {
+    var n = number
+    for (i in 1 until index) {
+        n /= 10
+    }
+    return n % 10
+}
 
 /**
  * Средняя (3 балла)
@@ -213,7 +255,15 @@ fun isPalindrome(n: Int): Boolean = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun hasDifferentDigits(n: Int): Boolean = TODO()
+fun hasDifferentDigits(n: Int): Boolean {
+    val firstDigit = n % 10
+    val digitNumber = digitNumber(n)
+    for (i in 2..digitNumber) {
+        val digit = getDigit(n, i)
+        if (digit != firstDigit) return true
+    }
+    return false
+}
 
 /**
  * Средняя (4 балла)
@@ -224,7 +274,20 @@ fun hasDifferentDigits(n: Int): Boolean = TODO()
  * Подумайте, как добиться более быстрой сходимости ряда при больших значениях x.
  * Использовать kotlin.math.sin и другие стандартные реализации функции синуса в этой задаче запрещается.
  */
-fun sin(x: Double, eps: Double): Double = TODO()
+fun sin(x: Double, eps: Double): Double {
+    var argument = x
+    while (argument - 2 * PI > 1e-5) argument -= 2 * PI
+    if (abs(argument - 0.0) < 1e-5 || abs(argument - PI) < 1e-5) return 0.0
+    var step = 1
+    var term = -argument.pow((step * 2 + 1).toDouble()) / factorial(step * 2 + 1)
+    var result = argument
+    while (abs(term) >= eps) {
+        result += term
+        step++
+        term = (-1.0).pow(step) * argument.pow((step * 2 + 1).toDouble()) / factorial(step * 2 + 1)
+    }
+    return result
+}
 
 /**
  * Средняя (4 балла)
@@ -235,7 +298,20 @@ fun sin(x: Double, eps: Double): Double = TODO()
  * Подумайте, как добиться более быстрой сходимости ряда при больших значениях x.
  * Использовать kotlin.math.cos и другие стандартные реализации функции косинуса в этой задаче запрещается.
  */
-fun cos(x: Double, eps: Double): Double = TODO()
+fun cos(x: Double, eps: Double): Double {
+    var argument = x
+    while (argument - 2 * PI > 1e-5) argument -= 2 * PI
+    if (abs(argument - PI / 2) < 1e-5 || abs(argument - PI * 3 / 2) < 1e-5) return 0.0
+    var step = 1
+    var term = -argument.pow((step * 2).toDouble()) / factorial(step * 2)
+    var result = 1.0
+    while (abs(term) >= eps) {
+        result += term
+        step++
+        term = (-1.0).pow(step) * argument.pow((step * 2).toDouble()) / factorial(step * 2)
+    }
+    return result
+}
 
 /**
  * Сложная (4 балла)
@@ -246,7 +322,35 @@ fun cos(x: Double, eps: Double): Double = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun squareSequenceDigit(n: Int): Int = TODO()
+fun squareSequenceDigit(n: Int): Int {
+    val sequence = mutableListOf(1)
+    var sequenceLength = 1
+    var index = 1
+    while (sequenceLength < n) {
+        index++
+        val square = sqr(index)
+        sequence += square
+        if (sequenceLength + digitNumber(square) > n)
+            return getDigitReverse(square, n - sequenceLength)
+        else sequenceLength += digitNumber(square)
+    }
+    return sequence.last() % 10
+}
+
+fun getDigitReverse(number: Int, index: Int): Int = getDigit(number, digitNumber(number) - index + 1)
+
+fun intPow(number: Int, degree: Int): Int {
+    return if (degree == 0) 1
+    else {
+        var index = 1
+        var result = number
+        while (index < degree) {
+            result *= number
+            index++
+        }
+        return result
+    }
+}
 
 /**
  * Сложная (5 баллов)
@@ -257,4 +361,23 @@ fun squareSequenceDigit(n: Int): Int = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun fibSequenceDigit(n: Int): Int = TODO()
+fun fibSequenceDigit(n: Int): Int {
+    if (n < 3) return 1
+    else {
+        val sequence = mutableListOf(1, 1)
+        var sequenceLength = 2
+        var number1 = 1
+        var number2 = 1
+        while (sequenceLength < n) {
+            val nextNumber = number1 + number2
+            if (sequenceLength + digitNumber(nextNumber) > n) return getDigitReverse(nextNumber, n - sequenceLength)
+            else {
+                sequence += nextNumber
+                sequenceLength += digitNumber(nextNumber)
+                number1 = number2
+                number2 = nextNumber
+            }
+        }
+        return sequence.last() % 10
+    }
+}

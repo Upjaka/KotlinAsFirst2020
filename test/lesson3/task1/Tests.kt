@@ -230,6 +230,15 @@ class Tests {
     }
 
     @Test
+    @Tag("MyFun")
+    fun intPow() {
+        assertEquals(1, intPow(10, 0))
+        assertEquals(10, intPow(10, 1))
+        assertEquals(100, intPow(10, 2))
+        assertEquals(1000, intPow(10, 3))
+    }
+
+    @Test
     @Tag("4")
     fun squareSequenceDigit() {
         assertEquals(1, squareSequenceDigit(1))
