@@ -111,14 +111,12 @@ fun fib(n: Int): Int =
  */
 fun minDivisor(n: Int): Int {
     if (n < 3) return n
-    else {
-        var result = 1
-        while (result < n / 2) {
-            result++
-            if (n % result == 0) return result
-        }
-        return n
+    var result = 1
+    while (result < sqrt(n.toDouble())) {
+        result++
+        if (n % result == 0) return result
     }
+    return n
 }
 
 /**
@@ -161,12 +159,13 @@ fun collatzSteps(x: Int): Int {
  * минимальное число k, которое делится и на m и на n без остатка
  */
 fun lcm(m: Int, n: Int): Int {
-    var result = max(m, n)
+    val maxNumber = max(m, n)
+    var result = maxNumber
     while (result % m != 0 || result % n != 0) {
         if (result > m * n / 2.0) {
             return m * n
         }
-        result += max(m, n)
+        result += maxNumber
     }
     return result
 }
@@ -226,11 +225,10 @@ fun revert(n: Int): Int {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun isPalindrome(n: Int): Boolean {
-    val digitNumber = digitNumber(n)
-    for (i in 1..digitNumber / 2) {
-        if (getDigit(n, i) != getDigit(n, digitNumber - i + 1)) return false
-    }
-    return true
+    val numberOfDigit = digitNumber(n)
+    val firstDegree = if (numberOfDigit % 2 == 0) numberOfDigit / 2 else numberOfDigit / 2 + 1
+    val secondDegree = numberOfDigit / 2
+    return n / (10.0.pow(firstDegree)).toInt() == revert(n % (10.0.pow(secondDegree)).toInt())
 }
 
 fun getDigit(number: Int, index: Int): Int {
@@ -270,15 +268,16 @@ fun hasDifferentDigits(n: Int): Boolean {
  */
 fun sin(x: Double, eps: Double): Double {
     var argument = x
-    while (argument - 2 * PI > 1e-5) argument -= 2 * PI
-    if (abs(argument - 0.0) < 1e-5 || abs(argument - PI) < 1e-5) return 0.0
+    val signX = if (x < 0) -1 else 1
+    while (abs(argument) > 2 * PI) argument -= signX * 2 * PI
+    if (argument < 0) argument += 2 * PI
     var step = 1
-    var term = -argument.pow((step * 2 + 1).toDouble()) / factorial(step * 2 + 1)
+    var nextMember = -argument.pow((step * 2 + 1).toDouble()) / factorial(step * 2 + 1)
     var result = argument
-    while (abs(term) >= eps) {
-        result += term
+    while (abs(nextMember) >= eps) {
+        result += nextMember
         step++
-        term = (-1.0).pow(step) * argument.pow((step * 2 + 1).toDouble()) / factorial(step * 2 + 1)
+        nextMember = (-1.0).pow(step) * argument.pow((step * 2 + 1).toDouble()) / factorial(step * 2 + 1)
     }
     return result
 }
@@ -294,15 +293,16 @@ fun sin(x: Double, eps: Double): Double {
  */
 fun cos(x: Double, eps: Double): Double {
     var argument = x
-    while (argument - 2 * PI > 1e-5) argument -= 2 * PI
-    if (abs(argument - PI / 2) < 1e-5 || abs(argument - PI * 3 / 2) < 1e-5) return 0.0
+    val signX = if (x < 0) -1 else 1
+    while (abs(argument) > 2 * PI) argument -= signX * 2 * PI
+    if (argument < 0) argument += 2 * PI
     var step = 1
-    var term = -argument.pow((step * 2).toDouble()) / factorial(step * 2)
+    var nextMember = -argument.pow((step * 2).toDouble()) / factorial(step * 2)
     var result = 1.0
-    while (abs(term) >= eps) {
-        result += term
+    while (abs(nextMember) >= eps) {
+        result += nextMember
         step++
-        term = (-1.0).pow(step) * argument.pow((step * 2).toDouble()) / factorial(step * 2)
+        nextMember = (-1.0).pow(step) * argument.pow((step * 2).toDouble()) / factorial(step * 2)
     }
     return result
 }
@@ -317,18 +317,16 @@ fun cos(x: Double, eps: Double): Double {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun squareSequenceDigit(n: Int): Int {
-    val sequence = mutableListOf(1)
     var sequenceLength = 1
     var index = 1
+    var square = 1
     while (sequenceLength < n) {
-        index++
-        val square = sqr(index)
-        sequence += square
+        square = sqr(++index)
         if (sequenceLength + digitNumber(square) > n)
             return getDigitReverse(square, n - sequenceLength)
-        else sequenceLength += digitNumber(square)
+        sequenceLength += digitNumber(square)
     }
-    return sequence.last() % 10
+    return square % 10
 }
 
 fun getDigitReverse(number: Int, index: Int): Int = getDigit(number, digitNumber(number) - index + 1)
@@ -358,20 +356,19 @@ fun intPow(number: Int, degree: Int): Int {
 fun fibSequenceDigit(n: Int): Int {
     if (n < 3) return 1
     else {
-        val sequence = mutableListOf(1, 1)
         var sequenceLength = 2
         var number1 = 1
         var number2 = 1
+        var nextNumber = number1 + number2
         while (sequenceLength < n) {
-            val nextNumber = number1 + number2
+            nextNumber = number1 + number2
             if (sequenceLength + digitNumber(nextNumber) > n) return getDigitReverse(nextNumber, n - sequenceLength)
             else {
-                sequence += nextNumber
                 sequenceLength += digitNumber(nextNumber)
                 number1 = number2
                 number2 = nextNumber
             }
         }
-        return sequence.last() % 10
+        return nextNumber % 10
     }
 }

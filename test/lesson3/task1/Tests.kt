@@ -211,13 +211,19 @@ class Tests {
     fun sin() {
         assertEquals(0.0, sin(0.0, 1e-5), 1e-5)
         assertEquals(1.0, sin(PI / 2.0, 1e-5), 1e-5)
+        assertEquals(0.0, sin(2 * PI, 1e-5), 1e-5)
+        assertEquals(-1.0, sin(-PI / 2.0, 1e-5), 1e-5)
         assertEquals(0.0, sin(PI, 1e-5), 1e-5)
+        assertEquals(0.0, sin(-PI, 1e-5), 1e-5)
         assertEquals(-1.0, sin(3.0 * PI / 2.0, 1e-5), 1e-5)
         assertEquals(0.0, sin(100 * PI, 1e-5), 1e-5)
         assertNotEquals(kotlin.math.sin(1.0), sin(1.0, 1.0))
         assertNotEquals(kotlin.math.sin(-0.5), sin(-0.5, 1.0))
-        assertEquals(0.017452406459518247, sin(-18.84955592153876, 1e-10))
-
+        assertNotEquals(kotlin.math.sin(-1.84), sin(-1.84, 1.0))
+        assertNotEquals(kotlin.math.sin(-0.17453), sin(-0.17453, 1.0))
+        assertNotEquals(kotlin.math.sin(-0.75), sin(-0.75, 1.0))
+        println(kotlin.math.sin(-18.832102629018816))
+        assertEquals(0.017452403307423047, sin(-18.832102629018816, 1e-10))
     }
 
     @Test
@@ -230,6 +236,11 @@ class Tests {
         assertEquals(1.0, cos(100 * PI, 1e-5), 1e-5)
         assertNotEquals(kotlin.math.cos(1.0), cos(1.0, 1.0))
         assertNotEquals(kotlin.math.cos(0.5), cos(-0.5, 1.0))
+        assertNotEquals(kotlin.math.cos(1.0), sin(1.0, 1.0))
+        assertNotEquals(kotlin.math.cos(-0.5), sin(-0.5, 1.0))
+        assertNotEquals(kotlin.math.cos(-1.84), sin(-1.84, 1.0))
+        assertNotEquals(kotlin.math.cos(-0.17453), sin(-0.17453, 1.0))
+        assertNotEquals(kotlin.math.cos(-0.75), sin(-0.75, 1.0))
         assertEquals(1.0, cos(-18.84955592153876, 1e-10))
     }
 
