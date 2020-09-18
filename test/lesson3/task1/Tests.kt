@@ -93,6 +93,7 @@ class Tests {
     @Test
     @Tag("2")
     fun minDivisor() {
+        assertEquals(1, minDivisor(1))
         assertEquals(2, minDivisor(2))
         assertEquals(3, minDivisor(75))
         assertEquals(5, minDivisor(75 / 3))
@@ -215,6 +216,8 @@ class Tests {
         assertEquals(0.0, sin(100 * PI, 1e-5), 1e-5)
         assertNotEquals(kotlin.math.sin(1.0), sin(1.0, 1.0))
         assertNotEquals(kotlin.math.sin(-0.5), sin(-0.5, 1.0))
+        assertEquals(0.017452406459518247, sin(-18.84955592153876, 1e-10))
+
     }
 
     @Test
@@ -227,6 +230,7 @@ class Tests {
         assertEquals(1.0, cos(100 * PI, 1e-5), 1e-5)
         assertNotEquals(kotlin.math.cos(1.0), cos(1.0, 1.0))
         assertNotEquals(kotlin.math.cos(0.5), cos(-0.5, 1.0))
+        assertEquals(1.0, cos(-18.84955592153876, 1e-10))
     }
 
     @Test

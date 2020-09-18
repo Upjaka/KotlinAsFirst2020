@@ -6,6 +6,7 @@ import lesson1.task1.discriminant
 import lesson1.task1.sqr
 import kotlin.math.abs
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.sqrt
 
 // Урок 2: ветвления (здесь), логический тип (см. 2.2).
@@ -190,11 +191,5 @@ fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int {
 
     return if (rightFinish < leftStart) {
         -1
-    } else {
-        if (rightFinish > leftFinish) {
-            leftFinish - leftStart
-        } else {
-            rightFinish - leftStart
-        }
-    }
+    } else min(leftFinish, rightFinish) - leftStart
 }

@@ -89,22 +89,20 @@ fun digitNumber(n: Int): Int {
  * Найти число Фибоначчи из ряда 1, 1, 2, 3, 5, 8, 13, 21, ... с номером n.
  * Ряд Фибоначчи определён следующим образом: fib(1) = 1, fib(2) = 1, fib(n+2) = fib(n) + fib(n+1)
  */
-fun fib(n: Int): Int {
-    return if (n < 3) 1
+fun fib(n: Int): Int =
+    if (n < 3) 1
     else {
         var term1 = 1
         var term2 = 1
         var index = 3
-        var temp: Int
         while (index < n) {
-            temp = term2
+            val temp = term2
             term2 += term1
             term1 = temp
             index++
         }
         term1 + term2
     }
-}
 
 /**
  * Простая (2 балла)
@@ -112,12 +110,15 @@ fun fib(n: Int): Int {
  * Для заданного числа n > 1 найти минимальный делитель, превышающий 1
  */
 fun minDivisor(n: Int): Int {
-    var result = 1
-    while (result < n) {
-        result++
-        if (n % result == 0) return result
+    if (n < 3) return n
+    else {
+        var result = 1
+        while (result < n / 2) {
+            result++
+            if (n % result == 0) return result
+        }
+        return n
     }
-    return result
 }
 
 /**
@@ -125,14 +126,7 @@ fun minDivisor(n: Int): Int {
  *
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
-fun maxDivisor(n: Int): Int {
-    var result = n
-    while (result > 1) {
-        result--
-        if (n % result == 0) return result
-    }
-    return result
-}
+fun maxDivisor(n: Int): Int = n / minDivisor(n)
 
 /**
  * Простая (2 балла)
@@ -167,12 +161,12 @@ fun collatzSteps(x: Int): Int {
  * минимальное число k, которое делится и на m и на n без остатка
  */
 fun lcm(m: Int, n: Int): Int {
-    var result = if (m > n) m else n
+    var result = max(m, n)
     while (result % m != 0 || result % n != 0) {
         if (result > m * n / 2.0) {
             return m * n
         }
-        result++
+        result += max(m, n)
     }
     return result
 }
