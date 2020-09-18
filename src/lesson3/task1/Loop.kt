@@ -224,12 +224,7 @@ fun revert(n: Int): Int {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun isPalindrome(n: Int): Boolean {
-    val numberOfDigit = digitNumber(n)
-    val firstDegree = if (numberOfDigit % 2 == 0) numberOfDigit / 2 else numberOfDigit / 2 + 1
-    val secondDegree = numberOfDigit / 2
-    return n / (10.0.pow(firstDegree)).toInt() == revert(n % (10.0.pow(secondDegree)).toInt())
-}
+fun isPalindrome(n: Int): Boolean = n == revert(n)
 
 fun getDigit(number: Int, index: Int): Int {
     var n = number
