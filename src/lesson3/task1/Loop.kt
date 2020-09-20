@@ -262,18 +262,14 @@ fun hasDifferentDigits(n: Int): Boolean {
  * Использовать kotlin.math.sin и другие стандартные реализации функции синуса в этой задаче запрещается.
  */
 fun sin(x: Double, eps: Double): Double {
-    var argument = x
-    val signX = if (x < 0) -1 else 1
-    while (abs(argument) > 2 * PI) argument -= signX * 2 * PI
-    if (argument < 0) argument += 2 * PI
-    var step = 1
-    var nextMember = -argument.pow((step * 2 + 1).toDouble()) / factorial(step * 2 + 1)
-    var result = argument
-    while (abs(nextMember) >= eps) {
+    val argument = x % (2 * PI)
+    var step = 0
+    var result = 0.0
+    do {
+        val nextMember = (-1.0).pow(step) * argument.pow((step * 2 + 1)) / factorial(step * 2 + 1)
         result += nextMember
         step++
-        nextMember = (-1.0).pow(step) * argument.pow((step * 2 + 1).toDouble()) / factorial(step * 2 + 1)
-    }
+    } while (abs(nextMember) >= eps)
     return result
 }
 
@@ -287,18 +283,14 @@ fun sin(x: Double, eps: Double): Double {
  * Использовать kotlin.math.cos и другие стандартные реализации функции косинуса в этой задаче запрещается.
  */
 fun cos(x: Double, eps: Double): Double {
-    var argument = x
-    val signX = if (x < 0) -1 else 1
-    while (abs(argument) > 2 * PI) argument -= signX * 2 * PI
-    if (argument < 0) argument += 2 * PI
-    var step = 1
-    var nextMember = -argument.pow((step * 2).toDouble()) / factorial(step * 2)
-    var result = 1.0
-    while (abs(nextMember) >= eps) {
+    val argument = x % (2 * PI)
+    var step = 0
+    var result = 0.0
+    do {
+        val nextMember = (-1.0).pow(step) * argument.pow((step * 2).toDouble()) / factorial(step * 2)
         result += nextMember
         step++
-        nextMember = (-1.0).pow(step) * argument.pow((step * 2).toDouble()) / factorial(step * 2)
-    }
+    } while (abs(nextMember) >= eps)
     return result
 }
 
