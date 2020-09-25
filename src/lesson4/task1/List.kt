@@ -363,7 +363,8 @@ fun russian(n: Int): String {
                     2 -> result.append("двадцать ")
                     3 -> result.append("тридцать ")
                     4 -> result.append("сорок ")
-                    in 5..9 -> result.append("${transformDigit(number / 10 % 10)}десят ")
+                    in 5..8 -> result.append("${transformDigit(number / 10 % 10)}десят ")
+                    9 -> result.append("девяносто ")
                 }
                 when (number % 10) {
                     1 -> result.append("одна ")
@@ -397,7 +398,8 @@ fun russian(n: Int): String {
         in 15..19 -> result.append(transformDigit(number % 100).removeSuffix("ь") + "надцать")
         in 20..39 -> result.append("${transformDigit(number / 10 % 10)}дцать ${transformDigit(number % 10)}")
         in 40..49 -> result.append("сорок ${transformDigit(number % 10)}")
-        in 50..99 -> result.append("${transformDigit(number / 10 % 10)}десят ${transformDigit(number % 10)}")
+        in 50..89 -> result.append("${transformDigit(number / 10 % 10)}десят ${transformDigit(number % 10)}")
+        in 90..99 -> result.append("девяносто ${transformDigit(number % 10)}")
     }
     return result.toString().removeSuffix(" ")
 }
