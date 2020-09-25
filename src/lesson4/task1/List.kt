@@ -5,6 +5,7 @@ package lesson4.task1
 import lesson1.task1.discriminant
 import kotlin.math.sqrt
 import lesson3.task1.minDivisor
+import kotlin.math.pow
 import kotlin.text.StringBuilder
 
 // Урок 4: списки
@@ -155,14 +156,11 @@ fun center(list: MutableList<Double>): MutableList<Double> {
  * C = a1b1 + a2b2 + ... + aNbN. Произведение пустых векторов считать равным 0.
  */
 fun times(a: List<Int>, b: List<Int>): Int {
-    return if (a.isEmpty() && b.isEmpty()) 0
-    else {
-        var result = 0
-        for (i in a.indices) {
-            result += a[i] * b[i]
-        }
-        result
+    var result = 0
+    for (i in a.indices) {
+        result += a[i] * b[i]
     }
+    return result
 }
 
 /**
@@ -176,14 +174,8 @@ fun times(a: List<Int>, b: List<Int>): Int {
 fun polynom(p: List<Int>, x: Int): Int {
     var result = 0
     for (i in p.indices) {
-        result += p[i] * powInt(x, i)
+        result += p[i] * x.toDouble().pow(i).toInt()
     }
-    return result
-}
-
-fun powInt(base: Int, power: Int): Int {
-    var result = 1
-    for (i in 1..power) result *= base
     return result
 }
 
@@ -197,18 +189,14 @@ fun powInt(base: Int, power: Int): Int {
  *
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
-fun accumulate(list: MutableList<Int>): MutableList<Int> {
-    return if (list.isEmpty()) list
+fun accumulate(list: MutableList<Int>): MutableList<Int> =
+    if (list.isEmpty()) list
     else {
-        var sum = list.first()
         for (i in 1 until list.size) {
-            val temp = list[i]
-            list[i] += sum
-            sum += temp
+            list[i] += list[i - 1]
         }
         list
     }
-}
 
 /**
  * Средняя (3 балла)
@@ -248,10 +236,10 @@ fun convert(n: Int, base: Int): List<Int> {
     val result = mutableListOf(n % base)
     var number = n / base
     while (number > 0) {
-        result.add(0, number % base)
+        result.add(number % base)
         number /= base
     }
-    return result
+    return result.reversed()
 }
 
 /**
@@ -285,7 +273,7 @@ fun transformToChar(n: Int): Char =
 fun decimal(digits: List<Int>, base: Int): Int {
     var result = 0
     for (i in digits.indices) {
-        result += powInt(base, digits.size - 1 - i) * digits[i]
+        result += base.toDouble().pow(digits.size - 1 - i).toInt() * digits[i]
     }
     return result
 }
@@ -305,7 +293,7 @@ fun decimal(digits: List<Int>, base: Int): Int {
 fun decimalFromString(str: String, base: Int): Int {
     var number = 0
     for (i in str.indices) {
-        number += powInt(base, str.length - 1 - i) * transformFromChar(str[i])
+        number += base.toDouble().pow(str.length - 1 - i).toInt() * transformFromChar(str[i])
     }
     return number
 }
@@ -339,40 +327,9 @@ fun russian(n: Int): String {
     var number = n / 1000
     val result = StringBuilder()
     if (number != 0) {
-        when (number / 100) {
-            1 -> result.append("сто ")
-            2 -> result.append("двести ")
-            3 -> result.append("триста ")
-            4 -> result.append("четыреста ")
-            in 5..9 -> result.append(transformDigit(number / 100) + "сот ")
-            else -> result.append("")
-        }
-        when (number % 100) {
-            1 -> result.append("одна ")
-            2 -> result.append("две ")
-            in 3..4 -> result.append("${transformDigit(number % 10)} ")
-            in 5..9 -> result.append("${transformDigit(number % 10)} ")
-            10 -> result.append("десять ")
-            11 -> result.append("одиннадцать ")
-            12 -> result.append("двенадцать ")
-            13 -> result.append("тринадцать ")
-            14 -> result.append("четырнадцать ")
-            in 15..19 -> result.append(transformDigit(number % 10).removeSuffix("ь") + "надцать ")
-            in 20..99 -> {
-                when (number / 10 % 10) {
-                    2 -> result.append("двадцать ")
-                    3 -> result.append("тридцать ")
-                    4 -> result.append("сорок ")
-                    in 5..8 -> result.append("${transformDigit(number / 10 % 10)}десят ")
-                    9 -> result.append("девяносто ")
-                }
-                when (number % 10) {
-                    1 -> result.append("одна ")
-                    2 -> result.append("две ")
-                    in 3..9 -> result.append(transformDigit(number % 10) + " ")
-                }
-            }
-        }
+        result.append(transformHundreds(number))
+        result.append(transformTens(number))
+        if (!((10..19).contains(number % 100))) result.append(transformUnitsForThousands(number))
         when (number % 10) {
             1 -> result.append("тысяча ")
             in 2..4 -> result.append("тысячи ")
@@ -380,32 +337,14 @@ fun russian(n: Int): String {
         }
     }
     number = n % 1000
-    when (number / 100) {
-        1 -> result.append("сто ")
-        2 -> result.append("двести ")
-        3 -> result.append("триста ")
-        4 -> result.append("четыреста ")
-        in 5..9 -> result.append(transformDigit(number / 100) + "сот ")
-        else -> result.append("")
-    }
-    when (number % 100) {
-        in 1..9 -> result.append(transformDigit(number % 10))
-        10 -> result.append("десять")
-        11 -> result.append("одиннадцать")
-        12 -> result.append("двенадцать")
-        13 -> result.append("тринадцать")
-        14 -> result.append("четырнадцать")
-        in 15..19 -> result.append(transformDigit(number % 10).removeSuffix("ь") + "надцать")
-        in 20..39 -> result.append("${transformDigit(number / 10 % 10)}дцать ${transformDigit(number % 10)}")
-        in 40..49 -> result.append("сорок ${transformDigit(number % 10)}")
-        in 50..89 -> result.append("${transformDigit(number / 10 % 10)}десят ${transformDigit(number % 10)}")
-        in 90..99 -> result.append("девяносто ${transformDigit(number % 10)}")
-    }
+    result.append(transformHundreds(number))
+    result.append(transformTens(number))
+    if (!((10..19).contains(number % 100))) result.append(transformUnits(number))
     return result.toString().removeSuffix(" ")
 }
 
-fun transformDigit(n: Int): String =
-    when (n) {
+fun transformUnits(n: Int): String =
+    when (n % 10) {
         1 -> "один"
         2 -> "два"
         3 -> "три"
@@ -415,5 +354,39 @@ fun transformDigit(n: Int): String =
         7 -> "семь"
         8 -> "восемь"
         9 -> "девять"
+        else -> ""
+    }
+
+fun transformUnitsForThousands(n: Int): String =
+    when (n % 10) {
+        1 -> "одна "
+        2 -> "две "
+        in 3..9 -> "${transformUnits(n % 10)} "
+        else -> ""
+    }
+
+fun transformTens(n: Int): String =
+    when (n % 100) {
+        10 -> "десять "
+        11 -> "одиннадцать "
+        12 -> "двенадцать "
+        13 -> "тринадцать "
+        14 -> "четырнадцать "
+        in 15..19 -> transformUnits(n % 10).removeSuffix("ь") + "надцать "
+        in 20..29 -> "двадцать "
+        in 30..39 -> "тридцать "
+        in 40..49 -> "сорок "
+        in 50..89 -> "${transformUnits(n / 10 % 10)}десят "
+        in 90..99 -> "девяносто "
+        else -> ""
+    }
+
+fun transformHundreds(n: Int): String =
+    when (n / 100) {
+        1 -> "сто "
+        2 -> "двести "
+        3 -> "триста "
+        4 -> "четыреста "
+        in 5..9 -> transformUnits(n / 100) + "сот "
         else -> ""
     }

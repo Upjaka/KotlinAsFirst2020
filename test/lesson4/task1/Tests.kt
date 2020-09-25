@@ -134,14 +134,6 @@ class Tests {
     }
 
     @Test
-    fun powInt() {
-        assertEquals(1, powInt(10, 0))
-        assertEquals(10, powInt(10, 1))
-        assertEquals(100, powInt(10, 2))
-        assertEquals(1024, powInt(2, 10))
-    }
-
-    @Test
     @Tag("3")
     fun polynom() {
         assertEquals(0, polynom(listOf(), 1000))
