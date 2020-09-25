@@ -363,12 +363,12 @@ fun russian(n: Int): String {
                     2 -> result.append("двадцать ")
                     3 -> result.append("тридцать ")
                     4 -> result.append("сорок ")
-                    in 5..9 -> result.append("${transformDigit(n / 10 % 10)}десят")
+                    in 5..9 -> result.append("${transformDigit(n / 10 % 10)}десят ")
                 }
                 when (number % 10) {
                     1 -> result.append("одна ")
                     2 -> result.append("две ")
-                    in 3..9 -> result.append(transformDigit(number % 10) + "")
+                    in 3..9 -> result.append(transformDigit(number % 10) + " ")
                 }
             }
         }
