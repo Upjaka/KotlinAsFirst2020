@@ -330,10 +330,13 @@ fun russian(n: Int): String {
         result.append(transformHundreds(number))
         result.append(transformTens(number))
         if (!((10..19).contains(number % 100))) result.append(transformUnitsForThousands(number))
-        when (number % 10) {
-            1 -> result.append("тысяча ")
-            in 2..4 -> result.append("тысячи ")
-            else -> result.append("тысяч ")
+        when (number % 100) {
+            in 10..14 -> result.append("тысяч ")
+            else -> when (number % 10) {
+                1 -> result.append("тысяча ")
+                in 2..4 -> result.append("тысячи ")
+                else -> result.append("тысяч ")
+            }
         }
     }
     number = n % 1000
