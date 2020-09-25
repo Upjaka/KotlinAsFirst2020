@@ -350,8 +350,8 @@ fun russian(n: Int): String {
         when (number % 100) {
             1 -> result.append("одна ")
             2 -> result.append("две ")
-            in 3..4 -> result.append("${transformDigit(number / 10 % 10)} ")
-            in 5..9 -> result.append("${transformDigit(number / 10 % 10)} ")
+            in 3..4 -> result.append("${transformDigit(number % 10)} ")
+            in 5..9 -> result.append("${transformDigit(number % 10)} ")
             10 -> result.append("десять ")
             11 -> result.append("одиннадцать ")
             12 -> result.append("двенадцать ")
@@ -389,13 +389,13 @@ fun russian(n: Int): String {
         else -> result.append("")
     }
     when (number % 100) {
-        in 1..9 -> result.append(transformDigit(number % 100))
+        in 1..9 -> result.append(transformDigit(number % 10))
         10 -> result.append("десять")
         11 -> result.append("одиннадцать")
         12 -> result.append("двенадцать")
         13 -> result.append("тринадцать")
         14 -> result.append("четырнадцать")
-        in 15..19 -> result.append(transformDigit(number % 100).removeSuffix("ь") + "надцать")
+        in 15..19 -> result.append(transformDigit(number % 10).removeSuffix("ь") + "надцать")
         in 20..39 -> result.append("${transformDigit(number / 10 % 10)}дцать ${transformDigit(number % 10)}")
         in 40..49 -> result.append("сорок ${transformDigit(number % 10)}")
         in 50..89 -> result.append("${transformDigit(number / 10 % 10)}десят ${transformDigit(number % 10)}")
