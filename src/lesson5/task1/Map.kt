@@ -2,6 +2,9 @@
 
 package lesson5.task1
 
+import lesson3.task1.cos
+import ru.spbstu.wheels.getOption
+
 // Урок 5: ассоциативные массивы и множества
 // Максимальное количество баллов = 14
 // Рекомендуемое количество баллов = 9
@@ -173,8 +176,12 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
     for (key in keys) {
         val numberA = mapA.getOrDefault(key, "")
         val numberB = mapB.getOrDefault(key, "")
-        result[key] = if (numberA == numberB) numberA else
-            ("$numberA, $numberB").removeSuffix(", ").removePrefix(", ")
+        result[key] = when {
+            numberA == numberB -> numberA
+            numberA == "" -> numberB
+            numberB == "" -> numberA
+            else -> "$numberA, $numberB"
+        }
     }
     return result.toMap()
 }
@@ -218,7 +225,20 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
  *     "печенье"
  *   ) -> "Мария"
  */
-fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? = TODO()
+fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? {
+    var name: String? = null
+    var minCost = Double.MAX_VALUE
+    for (key in stuff.keys) {
+        val type = (stuff[key] ?: error("")).first
+        val cost = (stuff[key] ?: error("")).second
+        if (type == kind) if (cost < minCost) {
+            name = key
+            minCost = cost
+        }
+    }
+    return name
+}
+
 
 /**
  * Средняя (3 балла)
@@ -229,7 +249,19 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  * Например:
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
-fun canBuildFrom(chars: List<Char>, word: String): Boolean = TODO()
+fun canBuildFrom(chars: List<Char>, word: String): Boolean {
+    val map1 = mutableMapOf<Char, Int>()
+    for (char in chars) {
+        if (map1[char] == null) map1[char] = 1
+        else map1[char] = map1[char]!! + 1
+    }
+    val map2 = mutableMapOf<Char, Int>()
+    for (char in word) {
+        if (map2[char] == null) map2[char] = 1
+        else map2[char] = map2[char]!! + 1
+    }
+    return map1 == map2
+}
 
 /**
  * Средняя (4 балла)
