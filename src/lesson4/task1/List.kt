@@ -344,7 +344,7 @@ fun russian(n: Int): String {
     if (number != 0) {
         result.append(transformHundreds(number))
         result.append(transformTens(number))
-        if (!((10..19).contains(number % 100))) result.append(transformUnitsForThousands(number))
+        if (number % 100 !in 10..19) result.append(transformUnitsForThousands(number))
         when (number % 100) {
             in 10..14 -> result.append("тысяч ")
             else -> when (number % 10) {
@@ -357,7 +357,7 @@ fun russian(n: Int): String {
     number = n % 1000
     result.append(transformHundreds(number))
     result.append(transformTens(number))
-    if (!((10..19).contains(number % 100))) result.append(transformUnits(number))
+    if (number % 100 !in 10..19) result.append(transformUnits(number))
     return result.toString().removeSuffix(" ")
 }
 
