@@ -103,7 +103,6 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
     val result = mutableMapOf<Int, MutableList<String>>()
     for (grade in grades.values.sorted()) result[grade] = mutableListOf()
     for ((student, grade) in grades) result.getValue(grade).add(student)
-    for (list in result.values) list.toList()
     return result.toMap()
 }
 
@@ -119,7 +118,7 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
  */
 fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
     for ((key, value) in a) {
-        if (b[key] == null || b[key] != value) return false
+        if (b[key] != value) return false
     }
     return true
 }
@@ -174,16 +173,16 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
     val keys = mapA.keys.union(mapB.keys)
     val result = mutableMapOf<String, String>()
     for (key in keys) {
-        val numberA = mapA.getOrDefault(key, "")
-        val numberB = mapB.getOrDefault(key, "")
+        val numberA = mapA[key]
+        val numberB = mapB[key]
         result[key] = when {
+            numberA == null -> numberB.toString()
+            numberB == null -> numberA
             numberA == numberB -> numberA
-            numberA == "" -> numberB
-            numberB == "" -> numberA
             else -> "$numberA, $numberB"
         }
     }
-    return result.toMap()
+    return result
 }
 
 /**
@@ -197,15 +196,14 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
  *     -> mapOf("MSFT" to 150.0, "NFLX" to 40.0)
  */
 fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> {
-    val keys = mutableSetOf<String>()
-    for ((name, _) in stockPrices) keys.add(name)
+    val mapPrices = mutableMapOf<String, MutableList<Double>>()
+    for ((name, price) in stockPrices) {
+        mapPrices.getOrPut(name) { mutableListOf() }.add(price)
+    }
     val result = mutableMapOf<String, Double>()
-    for (key in keys) {
-        val costs = mutableListOf<Double>()
-        for ((name, cost) in stockPrices) {
-            if (name == key) costs.add(cost)
-        }
-        result[key] = costs.sum() / costs.size
+    for (name in mapPrices.keys) {
+        val prices = mapPrices.getValue(name)
+        result[name] = prices.sum() / prices.size
     }
     return result
 }
