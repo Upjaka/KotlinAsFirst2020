@@ -19,7 +19,7 @@ import ru.spbstu.wheels.getOption
  */
 fun shoppingListCost(
     shoppingList: List<String>,
-    costs: Map<String, Double>
+    costs: Map<String, Double>,
 ): Double {
     var totalCost = 0.0
 
@@ -41,7 +41,7 @@ fun shoppingListCost(
  */
 fun filterByCountryCode(
     phoneBook: MutableMap<String, String>,
-    countryCode: String
+    countryCode: String,
 ) {
     val namesToRemove = mutableListOf<String>()
 
@@ -64,7 +64,7 @@ fun filterByCountryCode(
  */
 fun removeFillerWords(
     text: List<String>,
-    vararg fillerWords: String
+    vararg fillerWords: String,
 ): List<String> {
     val fillerWordSet = setOf(*fillerWords)
 
@@ -197,9 +197,8 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
  */
 fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> {
     val mapPrices = mutableMapOf<String, MutableList<Double>>()
-    for ((name, price) in stockPrices) {
+    for ((name, price) in stockPrices)
         mapPrices.getOrPut(name) { mutableListOf() }.add(price)
-    }
     val result = mutableMapOf<String, Double>()
     for (name in mapPrices.keys) {
         val prices = mapPrices.getValue(name)
@@ -273,7 +272,17 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean {
  * Например:
  *   extractRepeats(listOf("a", "b", "a")) -> mapOf("a" to 2)
  */
-fun extractRepeats(list: List<String>): Map<String, Int> = TODO()
+fun extractRepeats(list: List<String>): Map<String, Int> {
+    val result = mutableMapOf<String, Int>()
+    val listElements = mutableListOf<String>()
+    for (el in list) {
+        if (el !in listElements) listElements.add(el) else {
+            val repetitions = result.getOrDefault(el, 1) + 1
+            result[el] = repetitions
+        }
+    }
+    return result
+}
 
 /**
  * Средняя (3 балла)
@@ -287,7 +296,18 @@ fun extractRepeats(list: List<String>): Map<String, Int> = TODO()
  * Например:
  *   hasAnagrams(listOf("тор", "свет", "рот")) -> true
  */
-fun hasAnagrams(words: List<String>): Boolean = TODO()
+fun hasAnagrams(words: List<String>): Boolean {
+    val mapOfWords = mutableMapOf<Int, MutableList<String>>()
+    for (word in words) {
+        val listWords = mapOfWords.getOrPut(word.length) { mutableListOf() }
+        val sortedWord = word.toList().sorted().toString()
+        if (sortedWord in listWords) return true else {
+            listWords.add(sortedWord)
+            mapOfWords[word.length] = listWords
+        }
+    }
+    return false
+}
 
 /**
  * Сложная (5 баллов)
@@ -323,7 +343,26 @@ fun hasAnagrams(words: List<String>): Boolean = TODO()
  *          "GoodGnome" to setOf()
  *        )
  */
-fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> = TODO()
+fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> {
+    val result = mutableMapOf<String, Set<String>>()
+    for (man in friends.keys) {
+        result[man] = friends.getValue(man)
+        for (mansFriend in friends.getValue(man)) {
+            if (mansFriend !in friends.keys) result[mansFriend] = mutableSetOf()
+        }
+    }
+    for (i in 1..friends.keys.size) {
+        for (man in friends.keys) {
+            var mansFriends = result.getValue(man).toMutableSet()
+            for (friend in mansFriends) {
+                mansFriends = mansFriends.union(result.getValue(friend)) as MutableSet<String>
+            }
+            mansFriends.remove(man)
+            result[man] = mansFriends
+        }
+    }
+    return result
+}
 
 /**
  * Сложная (6 баллов)

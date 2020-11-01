@@ -257,6 +257,10 @@ class Tests {
             emptyMap<String, Int>(),
             extractRepeats(listOf("a", "b", "c"))
         )
+        assertEquals(
+            mapOf("a" to 2, "" to 3),
+            extractRepeats(listOf("a", "b", "a", "", "", ""))
+        )
     }
 
     @Test
@@ -301,6 +305,23 @@ class Tests {
                     "Mikhail" to setOf("Sveta"),
                     "Friend" to setOf("GoodGnome"),
                     "EvilGnome" to setOf()
+                )
+            )
+        )
+        assertEquals(
+            mapOf(
+                "1" to setOf("2", "3", "4", "5"),
+                "2" to setOf("3", "4", "5"),
+                "3" to setOf("4", "5"),
+                "4" to setOf("5"),
+                "5" to setOf()
+            ),
+            propagateHandshakes(
+                mapOf(
+                    "1" to setOf("2"),
+                    "2" to setOf("3"),
+                    "3" to setOf("4"),
+                    "4" to setOf("5")
                 )
             )
         )
