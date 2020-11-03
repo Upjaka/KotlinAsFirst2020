@@ -101,7 +101,6 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
     for ((student, grade) in grades) {
         val list = result.getOrPut(grade) { mutableListOf() }
         list.add(student)
-        result[grade] = list
     }
     return result
 }
@@ -248,14 +247,12 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
 fun canBuildFrom(chars: List<Char>, word: String): Boolean {
     val caselessChars = chars.map { it.toLowerCase() }
     val caselessWord = word.toLowerCase()
-    return if (word == "") true else {
-        val setFromList = caselessChars.toSet()
-        val setFromWord = mutableSetOf<Char>()
-        for (char in caselessWord) {
-            setFromWord.add(char)
-        }
-        setFromList.union(setFromWord) == setFromList
+    val setFromList = caselessChars.toSet()
+    val setFromWord = mutableSetOf<Char>()
+    for (char in caselessWord) {
+        setFromWord.add(char)
     }
+    return setFromList.union(setFromWord) == setFromList
 }
 
 /**
@@ -294,12 +291,11 @@ fun extractRepeats(list: List<String>): Map<String, Int> {
  *   hasAnagrams(listOf("тор", "свет", "рот")) -> true
  */
 fun hasAnagrams(words: List<String>): Boolean {
-    val mapOfWords = mutableMapOf<Int, MutableList<String>>()
+    val setOfWords = mutableSetOf<String>()
     for (word in words) {
-        val listWords = mapOfWords.getOrPut(word.length) { mutableListOf() }
         val sortedWord = word.toList().sorted().toString()
-        if (sortedWord in listWords) return true else {
-            listWords.add(sortedWord)
+        if (sortedWord in setOfWords) return true else {
+            setOfWords.add(sortedWord)
         }
     }
     return false
@@ -341,20 +337,20 @@ fun hasAnagrams(words: List<String>): Boolean {
  */
 fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> {
     val result = mutableMapOf<String, Set<String>>()
-    for ((man, _friends) in friends) {
-        result[man] = _friends
-        for (mansFriend in _friends) {
-            if (mansFriend !in friends) result[mansFriend] = setOf()
+    for ((man, friendsOfMan) in friends) {
+        result[man] = friendsOfMan
+        for (friend in friendsOfMan) {
+            if (friend !in friends) result[friend] = setOf()
         }
     }
     for (i in 1..friends.keys.size) {
         for (man in friends.keys) {
-            var mansFriends = result.getValue(man)
-            for (friend in mansFriends) {
-                mansFriends = mansFriends.union(result.getValue(friend))
+            var friendsOfMan = result.getValue(man)
+            for (friend in friendsOfMan) {
+                friendsOfMan = friendsOfMan.union(result.getValue(friend))
             }
-            mansFriends = mansFriends - man
-            result[man] = mansFriends
+            friendsOfMan = friendsOfMan - man
+            result[man] = friendsOfMan
         }
     }
     return result
