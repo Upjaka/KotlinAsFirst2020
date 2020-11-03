@@ -2,9 +2,6 @@
 
 package lesson5.task1
 
-import lesson3.task1.cos
-import ru.spbstu.wheels.getOption
-
 // Урок 5: ассоциативные массивы и множества
 // Максимальное количество баллов = 14
 // Рекомендуемое количество баллов = 9
@@ -101,9 +98,12 @@ fun buildWordSet(text: List<String>): MutableSet<String> {
  */
 fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
     val result = mutableMapOf<Int, MutableList<String>>()
-    for (grade in grades.values.sorted()) result[grade] = mutableListOf()
-    for ((student, grade) in grades) result.getValue(grade).add(student)
-    return result.toMap()
+    for ((student, grade) in grades) {
+        val list = result.getOrPut(grade) { mutableListOf() }
+        list.add(student)
+        result[grade] = list
+    }
+    return result
 }
 
 /**
@@ -176,7 +176,7 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
         val numberA = mapA[key]
         val numberB = mapB[key]
         result[key] = when {
-            numberA == null -> numberB.toString()
+            numberA == null -> numberB ?: ""
             numberB == null -> numberA
             numberA == numberB -> numberA
             else -> "$numberA, $numberB"
@@ -200,8 +200,7 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
     for ((name, price) in stockPrices)
         mapPrices.getOrPut(name) { mutableListOf() }.add(price)
     val result = mutableMapOf<String, Double>()
-    for (name in mapPrices.keys) {
-        val prices = mapPrices.getValue(name)
+    for ((name, prices) in mapPrices) {
         result[name] = prices.sum() / prices.size
     }
     return result
@@ -225,9 +224,9 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
 fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? {
     var name: String? = null
     var minCost = Double.MAX_VALUE
-    for (key in stuff.keys) {
-        val type = (stuff[key] ?: error("")).first
-        val cost = (stuff[key] ?: error("")).second
+    for ((key, item) in stuff) {
+        val type = item.first
+        val cost = item.second
         if (type == kind) if (cost < minCost) {
             name = key
             minCost = cost
@@ -247,16 +246,14 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
 fun canBuildFrom(chars: List<Char>, word: String): Boolean {
+    val caselessChars = chars.map { it.toLowerCase() }
     return if (word == "") true else {
-        val setFromList = mutableSetOf<Char>()
-        for (char in chars) {
-            setFromList.add(char)
-        }
+        val setFromList = caselessChars.toSet()
         val setFromWord = mutableSetOf<Char>()
         for (char in word) {
             setFromWord.add(char)
         }
-        (setFromList == setFromWord)
+        setFromList.union(setFromWord) == setFromList
     }
 }
 
@@ -274,11 +271,10 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean {
  */
 fun extractRepeats(list: List<String>): Map<String, Int> {
     val result = mutableMapOf<String, Int>()
-    val listElements = mutableListOf<String>()
+    val setElements = mutableSetOf<String>()
     for (el in list) {
-        if (el !in listElements) listElements.add(el) else {
-            val repetitions = result.getOrDefault(el, 1) + 1
-            result[el] = repetitions
+        if (el !in setElements) setElements.add(el) else {
+            result[el] = result.getOrDefault(el, 1) + 1
         }
     }
     return result
@@ -303,7 +299,6 @@ fun hasAnagrams(words: List<String>): Boolean {
         val sortedWord = word.toList().sorted().toString()
         if (sortedWord in listWords) return true else {
             listWords.add(sortedWord)
-            mapOfWords[word.length] = listWords
         }
     }
     return false
@@ -345,19 +340,19 @@ fun hasAnagrams(words: List<String>): Boolean {
  */
 fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> {
     val result = mutableMapOf<String, Set<String>>()
-    for (man in friends.keys) {
-        result[man] = friends.getValue(man)
-        for (mansFriend in friends.getValue(man)) {
-            if (mansFriend !in friends.keys) result[mansFriend] = mutableSetOf()
+    for ((man, _friends) in friends) {
+        result[man] = _friends
+        for (mansFriend in _friends) {
+            if (mansFriend !in friends) result[mansFriend] = setOf()
         }
     }
     for (i in 1..friends.keys.size) {
         for (man in friends.keys) {
-            var mansFriends = result.getValue(man).toMutableSet()
+            var mansFriends = result.getValue(man)
             for (friend in mansFriends) {
-                mansFriends = mansFriends.union(result.getValue(friend)) as MutableSet<String>
+                mansFriends = mansFriends.union(result.getValue(friend))
             }
-            mansFriends.remove(man)
+            mansFriends = mansFriends - man
             result[man] = mansFriends
         }
     }
