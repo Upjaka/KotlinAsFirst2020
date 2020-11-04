@@ -250,10 +250,7 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean {
     val caselessChars = chars.map { it.toLowerCase() }
     val caselessWord = word.toLowerCase()
     val setFromList = caselessChars.toSet()
-    val setFromWord = mutableSetOf<Char>()
-    for (char in caselessWord) {
-        setFromWord.add(char)
-    }
+    val setFromWord = word.toSet()
     return setFromList.union(setFromWord) == setFromList
 }
 
@@ -401,10 +398,7 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> = TODO()
 fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
     val numberOfItem = treasures.size
     val names = treasures.keys.toList()
-    val maxValue: Array<Array<Int>> = Array(numberOfItem + 1) { Array(capacity + 1) { 0 } }
-    for (j in 0..capacity) {
-        maxValue[0][j] = 0
-    }
+    val maxValue = Array(numberOfItem + 1) { Array(capacity + 1) { 0 } }
     for (i in 1..numberOfItem) {
         val weight = treasures.getValue(names[i - 1]).first
         val value = treasures.getValue(names[i - 1]).second
