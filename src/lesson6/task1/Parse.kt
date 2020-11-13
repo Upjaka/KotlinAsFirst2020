@@ -2,6 +2,8 @@
 
 package lesson6.task1
 
+import java.lang.NumberFormatException
+
 // Урок 6: разбор строк, исключения
 // Максимальное количество баллов = 13
 // Рекомендуемое количество баллов = 11
@@ -74,7 +76,50 @@ fun main() {
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30.02.2009) считается неверными
  * входными данными.
  */
-fun dateStrToDigit(str: String): String = TODO()
+fun dateStrToDigit(str: String): String {
+    val parts = str.split(" ")
+    if (parts.size != 3) return ""
+    val day: Int
+    try {
+        day = parts[0].toInt()
+    } catch (e: NumberFormatException) {
+        return ""
+    }
+    val month = when (parts[1]) {
+        "января" -> 1
+        "февраля" -> 2
+        "марта" -> 3
+        "апреля" -> 4
+        "мая" -> 5
+        "июня" -> 6
+        "июля" -> 7
+        "августа" -> 8
+        "сентября" -> 9
+        "октября" -> 10
+        "ноября" -> 11
+        "декабря" -> 12
+        else -> return ""
+    }
+    val year: Int
+    try {
+        year = parts[2].toInt()
+    } catch (e: NumberFormatException) {
+        return ""
+    }
+    return if (checkDate(day, month, year)) String.format("%02d.%02d.%d", day, month, year) else ""
+}
+
+fun checkDate(day: Int, month: Int, year: Int): Boolean {
+    if (month == 2)
+        if (year % 4 == 0) {
+            if (day !in 1..29) return false
+        } else
+            if (day !in 1..28) return false
+    if (month == 4 || month == 6 || month == 9 || month == 11)
+        if (day !in 1..30) return false
+    if (day !in 1..31) return false
+    return true
+}
 
 /**
  * Средняя (4 балла)
@@ -86,7 +131,44 @@ fun dateStrToDigit(str: String): String = TODO()
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30 февраля 2009) считается неверными
  * входными данными.
  */
-fun dateDigitToStr(digital: String): String = TODO()
+fun dateDigitToStr(digital: String): String {
+    val parts = digital.split(".")
+    if (parts.size != 3) return ""
+    val day: Int
+    try {
+        day = parts[0].toInt()
+    } catch (e: NumberFormatException) {
+        return ""
+    }
+    val month: Int
+    try {
+        month = parts[1].toInt()
+    } catch (e: NumberFormatException) {
+        return ""
+    }
+    val monthStr = when (parts[1]) {
+        "01" -> "января"
+        "02" -> "февраля"
+        "03" -> "марта"
+        "04" -> "апреля"
+        "05" -> "мая"
+        "06" -> "июня"
+        "07" -> "июля"
+        "08" -> "августа"
+        "09" -> "сентября"
+        "10" -> "октября"
+        "11" -> "ноября"
+        "12" -> "декабря"
+        else -> return ""
+    }
+    val year: Int
+    try {
+        year = parts[2].toInt()
+    } catch (e: NumberFormatException) {
+        return ""
+    }
+    return if (checkDate(day, month, year)) "$day $monthStr $year" else ""
+}
 
 /**
  * Средняя (4 балла)
