@@ -2,6 +2,7 @@
 
 package lesson6.task1
 
+import lesson2.task2.daysInMonth
 import java.lang.NumberFormatException
 
 // Урок 6: разбор строк, исключения
@@ -79,9 +80,8 @@ fun main() {
 fun dateStrToDigit(str: String): String {
     val parts = str.split(" ")
     if (parts.size != 3) return ""
-    val day: Int
-    try {
-        day = parts[0].toInt()
+    val day = try {
+        parts[0].toInt()
     } catch (e: NumberFormatException) {
         return ""
     }
@@ -106,19 +106,8 @@ fun dateStrToDigit(str: String): String {
     } catch (e: NumberFormatException) {
         return ""
     }
-    return if (checkDate(day, month, year)) String.format("%02d.%02d.%d", day, month, year) else ""
-}
-
-fun checkDate(day: Int, month: Int, year: Int): Boolean {
-    if (month == 2)
-        if ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) {
-            if (day !in 1..29) return false
-        } else
-            if (day !in 1..28) return false
-    if (month == 4 || month == 6 || month == 9 || month == 11)
-        if (day !in 1..30) return false
-    if (day !in 1..31) return false
-    return true
+    return if (day in 1..daysInMonth(month, year))
+        String.format("%02d.%02d.%d", day, month, year) else ""
 }
 
 /**
@@ -134,15 +123,13 @@ fun checkDate(day: Int, month: Int, year: Int): Boolean {
 fun dateDigitToStr(digital: String): String {
     val parts = digital.split(".")
     if (parts.size != 3) return ""
-    val day: Int
-    try {
-        day = parts[0].toInt()
+    val day = try {
+        parts[0].toInt()
     } catch (e: NumberFormatException) {
         return ""
     }
-    val month: Int
-    try {
-        month = parts[1].toInt()
+    val month = try {
+        parts[1].toInt()
     } catch (e: NumberFormatException) {
         return ""
     }
@@ -167,7 +154,7 @@ fun dateDigitToStr(digital: String): String {
     } catch (e: NumberFormatException) {
         return ""
     }
-    return if (checkDate(day, month, year)) "$day $monthStr $year" else ""
+    return if (day in 1..daysInMonth(month, year)) "$day $monthStr $year" else ""
 }
 
 /**
