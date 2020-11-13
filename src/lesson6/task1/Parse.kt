@@ -111,7 +111,7 @@ fun dateStrToDigit(str: String): String {
 
 fun checkDate(day: Int, month: Int, year: Int): Boolean {
     if (month == 2)
-        if (year % 4 == 0 && year % 100 != 0) {
+        if (year % 4 == 0 && year % 400 == 0) {
             if (day !in 1..29) return false
         } else
             if (day !in 1..28) return false
