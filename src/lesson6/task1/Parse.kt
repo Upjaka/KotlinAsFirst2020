@@ -170,14 +170,14 @@ fun dateDigitToStr(digital: String): String {
  * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах.
  */
 fun flattenPhoneNumber(phone: String): String {
-    val permissible = " +-()1234567890"
     val digits = "1234567890"
     val result = StringBuilder()
-    var country = ""
-    var city = ""
-    var number = ""
+    val country: String
+    val city: String
+    val number: String
 
-    val matchResult = Regex("""(^\+[1234567890]*)?( *\([ 1234567890-]*\))?([ 1234567890-]+)""").find(phone)
+    val matchResult = Regex("""(^\+[1234567890]*)?( *\([ 1234567890-]*\))?([ 1234567890-]+)""")
+        .find(phone)
     if (matchResult == null) return "" else {
         country = matchResult.groupValues[1]
         city = matchResult.groupValues[2]
@@ -228,7 +228,21 @@ fun flattenPhoneNumber(phone: String): String {
  * Прочитать строку и вернуть максимальное присутствующее в ней число (717 в примере).
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
-fun bestLongJump(jumps: String): Int = TODO()
+fun bestLongJump(jumps: String): Int {
+    val attempts = jumps.split(" ")
+    var result = -1
+    for (jump in attempts) {
+        if (jump != "-" && jump != "%") {
+            val length = try {
+                jump.toInt()
+            } catch (e: NumberFormatException) {
+                return -1
+            }
+            if (length > result) result = length
+        }
+    }
+    return result
+}
 
 /**
  * Сложная (6 баллов)
@@ -241,7 +255,25 @@ fun bestLongJump(jumps: String): Int = TODO()
  * При нарушении формата входной строки, а также в случае отсутствия удачных попыток,
  * вернуть -1.
  */
-fun bestHighJump(jumps: String): Int = TODO()
+fun bestHighJump(jumps: String): Int {
+    val attempts = jumps.split(" ")
+    var result = -1
+    for (i in attempts.indices) {
+        if (i % 2 == 0) {
+            val height = try {
+                attempts[i].toInt()
+            } catch (e: NumberFormatException) {
+                return -1
+            }
+            val str = attempts[i + 1]
+            for (char in str) {
+                if (char !in "+-%") return -1
+                if (char == '+' && height > result) result = height
+            }
+        }
+    }
+    return result
+}
 
 /**
  * Сложная (6 баллов)
