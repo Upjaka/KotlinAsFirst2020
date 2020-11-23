@@ -3,6 +3,7 @@
 package lesson6.task1
 
 import lesson2.task2.daysInMonth
+import lesson3.task1.cos
 import java.lang.NumberFormatException
 import kotlin.IllegalArgumentException
 
@@ -230,6 +231,7 @@ fun flattenPhoneNumber(phone: String): String {
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
 fun bestLongJump(jumps: String): Int {
+    if (jumps == "") return -1
     val attempts = jumps.split(" ")
     var result = -1
     for (jump in attempts) {
@@ -258,6 +260,7 @@ fun checkNumber(str: String, default: Int): Int {
  * вернуть -1.
  */
 fun bestHighJump(jumps: String): Int {
+    if (jumps == "") return -1
     val attempts = jumps.split(" ")
     var result = -1
     for (i in attempts.indices) {
@@ -316,9 +319,9 @@ fun firstDuplicateIndex(str: String): Int {
     val words = str.toLowerCase().split(' ')
     if (words.size < 2) return -1
     var result = 0
-    for (i in words.indices) {
-        if (words[i] == words[i + 1]) {
-            for (j in 0 until i) {
+    for (i in 1 until words.size) {
+        if (words[i] == words[i - 1]) {
+            for (j in 0 until i - 1) {
                 result += words[j].length + 1
             }
             return result
@@ -338,7 +341,18 @@ fun firstDuplicateIndex(str: String): Int {
  * или пустую строку при нарушении формата строки.
  * Все цены должны быть больше нуля либо равны нулю.
  */
-fun mostExpensive(description: String): String = TODO()
+fun mostExpensive(description: String): String {
+    var result = Pair("", 0.0)
+    val goods = description.split("; ")
+    for (good in goods) {
+        if (good != "") {
+            val name = good.split(' ')[0]
+            val cost = good.split(' ')[1].toDouble()
+            if (cost > result.second) result = Pair(name, cost)
+        }
+    }
+    return result.first
+}
 
 /**
  * Сложная (6 баллов)
