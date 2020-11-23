@@ -4,6 +4,7 @@ package lesson6.task1
 
 import lesson2.task2.daysInMonth
 import java.lang.NumberFormatException
+import kotlin.IllegalArgumentException
 
 // Урок 6: разбор строк, исключения
 // Максимальное количество баллов = 13
@@ -233,15 +234,16 @@ fun bestLongJump(jumps: String): Int {
     var result = -1
     for (jump in attempts) {
         if (jump != "-" && jump != "%") {
-            val length = try {
-                jump.toInt()
-            } catch (e: NumberFormatException) {
-                return -1
-            }
+            val length = checkNumber(jump, -1)
             if (length > result) result = length
         }
     }
     return result
+}
+
+fun checkNumber(str: String, default: Int): Int {
+    for (char in str) if (char !in "1234567890") return default
+    return str.toInt()
 }
 
 /**
@@ -260,11 +262,7 @@ fun bestHighJump(jumps: String): Int {
     var result = -1
     for (i in attempts.indices) {
         if (i % 2 == 0) {
-            val height = try {
-                attempts[i].toInt()
-            } catch (e: NumberFormatException) {
-                return -1
-            }
+            val height = checkNumber(attempts[i], -1)
             val str = attempts[i + 1]
             for (char in str) {
                 if (char !in "+-%") return -1
@@ -284,7 +282,26 @@ fun bestHighJump(jumps: String): Int {
  * Вернуть значение выражения (6 для примера).
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
-fun plusMinus(expression: String): Int = TODO()
+fun plusMinus(expression: String): Int {
+    val parts = expression.split(" ")
+    var result = checkNumber(parts[0])
+    for (i in parts.indices) {
+        if (i % 2 == 1) {
+            val number = checkNumber(parts[i + 1])
+            when (parts[i]) {
+                "+" -> result += number
+                "-" -> result -= number
+                else -> throw IllegalArgumentException()
+            }
+        }
+    }
+    return result
+}
+
+fun checkNumber(str: String): Int {
+    for (char in str) if (char !in "1234567890") throw IllegalArgumentException()
+    return str.toInt()
+}
 
 /**
  * Сложная (6 баллов)
@@ -295,7 +312,20 @@ fun plusMinus(expression: String): Int = TODO()
  * Вернуть индекс начала первого повторяющегося слова, или -1, если повторов нет.
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
-fun firstDuplicateIndex(str: String): Int = TODO()
+fun firstDuplicateIndex(str: String): Int {
+    val words = str.toLowerCase().split(' ')
+    if (words.size < 2) return -1
+    var result = 0
+    for (i in words.indices) {
+        if (words[i] == words[i + 1]) {
+            for (j in 0 until i) {
+                result += words[j].length + 1
+            }
+            return result
+        }
+    }
+    return -1
+}
 
 /**
  * Сложная (6 баллов)
