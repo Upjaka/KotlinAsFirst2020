@@ -3,7 +3,6 @@
 package lesson6.task1
 
 import lesson2.task2.daysInMonth
-import lesson3.task1.cos
 import java.lang.NumberFormatException
 import kotlin.IllegalArgumentException
 
@@ -260,8 +259,8 @@ fun checkNumber(str: String, default: Int): Int {
  * вернуть -1.
  */
 fun bestHighJump(jumps: String): Int {
-    if (jumps == "") return -1
     val attempts = jumps.split(" ")
+    if (attempts.size < 2) return -1
     var result = -1
     for (i in attempts.indices) {
         if (i % 2 == 0) {
@@ -348,7 +347,7 @@ fun mostExpensive(description: String): String {
         if (good != "") {
             val name = good.split(' ')[0]
             val cost = good.split(' ')[1].toDouble()
-            if (cost > result.second) result = Pair(name, cost)
+            if (cost >= result.second) result = Pair(name, cost)
         }
     }
     return result.first
@@ -365,7 +364,20 @@ fun mostExpensive(description: String): String {
  *
  * Вернуть -1, если roman не является корректным римским числом
  */
-fun fromRoman(roman: String): Int = TODO()
+fun fromRoman(roman: String): Int {
+    var result = 0
+    val letters = mapOf("I" to 1, "V" to 5, "X" to 10, "L" to 50, "C" to 100, "D" to 500, "M" to 1000)
+    val pairs = mapOf("IV" to 4, "IX" to 9, "XL" to 40, "XC" to 90, "CD" to 400, "CM" to 900)
+    if (roman == "") return 0
+    if (roman.length == 1) return letters.getOrDefault(roman, -1)
+    for (i in 0..roman.length - 2) {
+        val str = roman[i].toString() + roman[i + 1].toString()
+        result += pairs[str] ?: (letters[roman[i].toString()] ?: return -1)
+        if (i == roman.length - 2 && pairs[str] == null) result += letters[roman[i].toString()] ?: return -1
+    }
+
+    return result
+}
 
 /**
  * Очень сложная (7 баллов)
