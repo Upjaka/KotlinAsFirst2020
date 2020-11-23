@@ -100,9 +100,8 @@ fun dateStrToDigit(str: String): String {
         "декабря" -> 12
         else -> return ""
     }
-    val year: Int
-    try {
-        year = parts[2].toInt()
+    val year = try {
+        parts[2].toInt()
     } catch (e: NumberFormatException) {
         return ""
     }
@@ -148,9 +147,8 @@ fun dateDigitToStr(digital: String): String {
         "12" -> "декабря"
         else -> return ""
     }
-    val year: Int
-    try {
-        year = parts[2].toInt()
+    val year = try {
+        parts[2].toInt()
     } catch (e: NumberFormatException) {
         return ""
     }
@@ -171,7 +169,56 @@ fun dateDigitToStr(digital: String): String {
  *
  * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах.
  */
-fun flattenPhoneNumber(phone: String): String = TODO()
+fun flattenPhoneNumber(phone: String): String {
+    val permissible = " +-()1234567890"
+    val digits = "1234567890"
+    val result = StringBuilder()
+    var country = ""
+    var city = ""
+    var number = ""
+
+    for (char in phone) {
+        if (char !in permissible) return ""
+    }
+    val matchResult = Regex("""(^\+[1234567890]*)?( *\([ 1234567890-]*\))?([ 1234567890-]+)""").find(phone)
+    if (matchResult == null) return "" else {
+        country = matchResult.groupValues[1]
+        city = matchResult.groupValues[2]
+        number = matchResult.groupValues[3]
+    }
+    var flag = false
+    if (country != "") {
+        result.append('+')
+        for (char in country) {
+            if (char in digits) {
+                result.append(char)
+                flag = true
+            }
+        }
+        if (!flag) return ""
+    }
+    if (city != "") {
+        flag = false
+        for (char in city) {
+            if (char in digits) {
+                result.append(char)
+                flag = true
+            }
+        }
+        if (!flag) return ""
+    }
+    if (number != "") {
+        flag = false
+        for (char in number) {
+            if (char in digits) {
+                result.append(char)
+                flag = true
+            }
+        }
+        if (!flag) return ""
+    }
+    return result.toString()
+}
 
 /**
  * Средняя (5 баллов)
