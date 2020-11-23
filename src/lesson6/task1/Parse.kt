@@ -368,11 +368,13 @@ fun fromRoman(roman: String): Int {
     var result = 0
     val letters = mapOf("I" to 1, "V" to 5, "X" to 10, "L" to 50, "C" to 100, "D" to 500, "M" to 1000)
     val pairs = mapOf("IV" to 4, "IX" to 9, "XL" to 40, "XC" to 90, "CD" to 400, "CM" to 900)
-    if (roman == "") return 0
+    if (roman == "") return -1
     if (roman.length == 1) return letters.getOrDefault(roman, -1)
     for (i in 0..roman.length - 2) {
         val str = roman[i].toString() + roman[i + 1].toString()
-        result += pairs[str] ?: (letters[roman[i].toString()] ?: return -1)
+        if (pairs[roman[i].toString() + roman[i - 1].toString()] == null) {
+            result += pairs[str] ?: (letters[roman[i].toString()] ?: return -1)
+        }
         if (i == roman.length - 2 && pairs[str] == null) result += letters[roman[i].toString()] ?: return -1
     }
 
