@@ -177,15 +177,13 @@ fun flattenPhoneNumber(phone: String): String {
     var city = ""
     var number = ""
 
-    for (char in phone) {
-        if (char !in permissible) return ""
-    }
     val matchResult = Regex("""(^\+[1234567890]*)?( *\([ 1234567890-]*\))?([ 1234567890-]+)""").find(phone)
     if (matchResult == null) return "" else {
         country = matchResult.groupValues[1]
         city = matchResult.groupValues[2]
         number = matchResult.groupValues[3]
     }
+    if (country + city + number != phone) return ""
     var flag = false
     if (country != "") {
         result.append('+')
