@@ -370,14 +370,25 @@ fun fromRoman(roman: String): Int {
     val pairs = mapOf("IV" to 4, "IX" to 9, "XL" to 40, "XC" to 90, "CD" to 400, "CM" to 900)
     if (roman == "") return -1
     if (roman.length == 1) return letters.getOrDefault(roman, -1)
-    for (i in 0..roman.length - 2) {
-        val str = roman[i].toString() + roman[i + 1].toString()
-        if (pairs[roman[i].toString() + roman[i - 1].toString()] == null) {
-            result += pairs[str] ?: (letters[roman[i].toString()] ?: return -1)
-        }
-        if (i == roman.length - 2 && pairs[str] == null) result += letters[roman[i].toString()] ?: return -1
+    var i = 0
+    val str = roman[i].toString() + roman[i + 1].toString()
+    if (pairs[str] != null) {
+        result += pairs[str]!!
+        i = 2
+    } else if (letters[roman[i].toString()] != null) {
+        result += letters[roman[i].toString()]!!
+        i = 1
     }
-
+    while (i < roman.length - 1) {
+        val withNext = pairs[roman[i].toString() + roman[i + 1].toString()]
+        val withEarly = pairs[roman[i - 1].toString() + roman[i].toString()]
+        if (withEarly == null) {
+            result += withNext ?: (letters[roman[i].toString()] ?: return -1)
+            if (i == roman.length - 2 && withNext == null) if (letters[roman[i + 1].toString()] == null) return -1 else
+                result += letters[roman[i + 1].toString()]!!
+        }
+        i++
+    }
     return result
 }
 
