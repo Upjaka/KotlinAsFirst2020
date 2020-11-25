@@ -423,4 +423,54 @@ fun fromRoman(roman: String): Int {
  * IllegalArgumentException должен бросаться даже если ошибочная команда не была достигнута в ходе выполнения.
  *
  */
-fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> = TODO()
+fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
+    var count = 0
+    val brackets = mutableMapOf<Int, Int>()
+    val indexOpenBracket = mutableListOf<Int>()
+    for (i in commands.indices) {
+        val command = commands[i]
+        if (command !in " +-<>[]") throw IllegalArgumentException()
+        if (command == '[') {
+            indexOpenBracket.add(i)
+            count++
+        }
+        if (command == ']') {
+            brackets[indexOpenBracket.last()] = i
+            brackets[i] = indexOpenBracket.last()
+            indexOpenBracket.removeLast()
+            count--
+        }
+    }
+    if (count != 0) throw IllegalArgumentException()
+
+    val result = mutableListOf<Int>()
+    for (i in 1..cells) result.add(0)
+    var current = if (cells % 2 == 0) cells / 2 else (cells - 1) / 2
+    var commandIndex = 0
+    while (count < limit) {
+        when (commands[commandIndex]) {
+            '+' -> {
+                result[current]++
+                commandIndex++
+            }
+            '-' -> {
+                result[current]--
+                commandIndex++
+            }
+            '<' -> {
+                if (current == 0) throw IllegalStateException() else current--
+                commandIndex++
+            }
+            '>' -> {
+                if (current == cells - 1) throw IllegalStateException() else current++
+                commandIndex++
+            }
+            '[' -> if (result[current] == 0) commandIndex = brackets[commandIndex]!! + 1 else commandIndex++
+            ']' -> if (result[current] != 0) commandIndex = brackets[commandIndex]!! + 1 else commandIndex++
+            else -> commandIndex++
+        }
+        count++
+        if (commandIndex >= commands.length) break
+    }
+    return result
+}
