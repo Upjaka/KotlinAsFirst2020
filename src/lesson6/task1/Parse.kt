@@ -435,7 +435,8 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
             count++
         }
         if (command == ']') {
-            brackets[indexOpenBracket.last()] = i
+            if (indexOpenBracket.isNotEmpty()) brackets[indexOpenBracket.last()] = i else
+                throw IllegalArgumentException()
             brackets[i] = indexOpenBracket.last()
             indexOpenBracket.removeLast()
             count--
