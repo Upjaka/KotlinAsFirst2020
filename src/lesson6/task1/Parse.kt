@@ -448,6 +448,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     var current = if (cells % 2 == 0) cells / 2 else (cells - 1) / 2
     var commandIndex = 0
     while (count < limit) {
+        if (commandIndex >= commands.length) break
         when (commands[commandIndex]) {
             '+' -> {
                 result[current]++
@@ -470,7 +471,6 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
             else -> commandIndex++
         }
         count++
-        if (commandIndex >= commands.length) break
     }
     return result
 }
