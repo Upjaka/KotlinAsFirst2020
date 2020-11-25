@@ -372,27 +372,18 @@ fun fromRoman(roman: String): Int {
     if (roman == "") return -1
     if (roman.length == 1) return letters.getOrDefault(roman, -1)
     var i = 0
-    val pair = pairs[roman[i].toString() + roman[i + 1].toString()]
-    if (pair != null) {
-        result += pair
-        i = 2
-    } else {
-        val letter = letters[roman[i].toString()]
-        if (letter != null) {
-            result += letter
-            i = 1
-        } else return -1
-    }
+    var flagPairBehind = false
     while (i < roman.length - 1) {
-        val withNext = pairs[roman[i].toString() + roman[i + 1].toString()]
-        val withEarly = pairs[roman[i - 1].toString() + roman[i].toString()]
-        if (withEarly == null) {
-            result += withNext ?: (letters[roman[i].toString()] ?: return -1)
-            if (i == roman.length - 2 && withNext == null) if (letters[roman[i + 1].toString()] == null) return -1 else
-                result += letters[roman[i + 1].toString()]!!
+        val pairWithNext = pairs[roman[i].toString() + roman[i + 1].toString()]
+        if (!flagPairBehind) {
+            result += pairWithNext ?: (letters[roman[i].toString()] ?: return -1)
         }
+        if (flagPairBehind)
+            flagPairBehind = false else
+            if (pairWithNext != null) flagPairBehind = true
         i++
     }
+    if (!flagPairBehind) result += letters[roman[i].toString()] ?: return -1
     return result
 }
 
