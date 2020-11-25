@@ -230,19 +230,19 @@ fun flattenPhoneNumber(phone: String): String {
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
 fun bestLongJump(jumps: String): Int {
-    if (jumps == "") return -1
     val attempts = jumps.split(" ")
     var result = -1
     for (jump in attempts) {
         if (jump != "-" && jump != "%") {
             val length = checkNumber(jump, -1)
-            if (length > result) result = length
+            if (length == -1) return -1 else if (length > result) result = length
         }
     }
     return result
 }
 
 fun checkNumber(str: String, default: Int): Int {
+    if (str == "") return default
     for (char in str) if (char !in "1234567890") return default
     return str.toInt()
 }
@@ -289,10 +289,10 @@ fun plusMinus(expression: String): Int {
     var result = checkNumber(parts[0])
     for (i in parts.indices) {
         if (i % 2 == 1) {
-            val number = checkNumber(parts[i + 1])
+            if (i == parts.size - 1) throw IllegalArgumentException()
             when (parts[i]) {
-                "+" -> result += number
-                "-" -> result -= number
+                "+" -> result += checkNumber(parts[i + 1])
+                "-" -> result -= checkNumber(parts[i + 1])
                 else -> throw IllegalArgumentException()
             }
         }
@@ -301,6 +301,7 @@ fun plusMinus(expression: String): Int {
 }
 
 fun checkNumber(str: String): Int {
+    if (str == "") throw IllegalArgumentException()
     for (char in str) if (char !in "1234567890") throw IllegalArgumentException()
     return str.toInt()
 }
@@ -371,13 +372,16 @@ fun fromRoman(roman: String): Int {
     if (roman == "") return -1
     if (roman.length == 1) return letters.getOrDefault(roman, -1)
     var i = 0
-    val str = roman[i].toString() + roman[i + 1].toString()
-    if (pairs[str] != null) {
-        result += pairs[str]!!
+    val pair = pairs[roman[i].toString() + roman[i + 1].toString()]
+    if (pair != null) {
+        result += pair
         i = 2
-    } else if (letters[roman[i].toString()] != null) {
-        result += letters[roman[i].toString()]!!
-        i = 1
+    } else {
+        val letter = letters[roman[i].toString()]
+        if (letter != null) {
+            result += letter
+            i = 1
+        } else return -1
     }
     while (i < roman.length - 1) {
         val withNext = pairs[roman[i].toString() + roman[i + 1].toString()]

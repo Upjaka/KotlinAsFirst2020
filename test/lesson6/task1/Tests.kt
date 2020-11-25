@@ -82,6 +82,7 @@ class Tests {
     @Test
     @Tag("5")
     fun bestLongJump() {
+        assertEquals(-1, bestLongJump("-   -"))
         assertEquals(717, bestLongJump("706 % - 717 - 703"))
         assertEquals(-1, bestLongJump("% - - % -"))
         assertEquals(754, bestLongJump("700 717 707 % 754"))
@@ -101,6 +102,8 @@ class Tests {
     @Test
     @Tag("6")
     fun plusMinus() {
+        assertThrows(IllegalArgumentException::class.java) { plusMinus("7 +") }
+        assertThrows(IllegalArgumentException::class.java) { plusMinus("7 ") }
         assertEquals(0, plusMinus("0"))
         assertEquals(4, plusMinus("2 + 2"))
         assertEquals(6, plusMinus("2 + 31 - 40 + 13"))
@@ -134,6 +137,7 @@ class Tests {
     @Tag("6")
     fun fromRoman() {
         assertEquals(1, fromRoman("I"))
+        assertEquals(-1, fromRoman("aa"))
         assertEquals(3000, fromRoman("MMM"))
         assertEquals(1978, fromRoman("MCMLXXVIII"))
         assertEquals(694, fromRoman("DCXCIV"))
