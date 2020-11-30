@@ -234,16 +234,16 @@ fun bestLongJump(jumps: String): Int {
     var result = -1
     for (jump in attempts) {
         if (jump != "-" && jump != "%") {
-            val length = checkNumber(jump, -1)
+            val length = checkNumber(jump)
             if (length == -1) return -1 else if (length > result) result = length
         }
     }
     return result
 }
 
-fun checkNumber(str: String, default: Int): Int {
-    if (str == "") return default
-    for (char in str) if (char !in "1234567890") return default
+fun checkNumber(str: String): Int {
+    if (str == "") return -1
+    for (char in str) if (char !in "1234567890") return -1
     return str.toInt()
 }
 
@@ -264,7 +264,7 @@ fun bestHighJump(jumps: String): Int {
     var result = -1
     for (i in attempts.indices) {
         if (i % 2 == 0) {
-            val height = checkNumber(attempts[i], -1)
+            val height = checkNumber(attempts[i])
             val str = attempts[i + 1]
             for (char in str) {
                 if (char !in "+-%") return -1
@@ -285,25 +285,25 @@ fun bestHighJump(jumps: String): Int {
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
 fun plusMinus(expression: String): Int {
+    fun check(str: String): Int {
+        if (str == "") throw IllegalArgumentException()
+        for (char in str) if (char !in "1234567890") throw IllegalArgumentException()
+        return str.toInt()
+    }
+
     val parts = expression.split(" ")
-    var result = checkNumber(parts[0])
+    var result = check(parts[0])
     for (i in parts.indices) {
         if (i % 2 == 1) {
             if (i == parts.size - 1) throw IllegalArgumentException()
             when (parts[i]) {
-                "+" -> result += checkNumber(parts[i + 1])
-                "-" -> result -= checkNumber(parts[i + 1])
+                "+" -> result += check(parts[i + 1])
+                "-" -> result -= check(parts[i + 1])
                 else -> throw IllegalArgumentException()
             }
         }
     }
     return result
-}
-
-fun checkNumber(str: String): Int {
-    if (str == "") throw IllegalArgumentException()
-    for (char in str) if (char !in "1234567890") throw IllegalArgumentException()
-    return str.toInt()
 }
 
 /**
