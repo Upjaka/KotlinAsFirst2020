@@ -173,17 +173,12 @@ fun dateDigitToStr(digital: String): String {
 fun flattenPhoneNumber(phone: String): String {
     val digits = "1234567890"
     val result = StringBuilder()
-    val country: String
-    val city: String
-    val number: String
 
-    val matchResult = Regex("""(^\+[1234567890]*)?( *\([ 1234567890-]*\))?([ 1234567890-]+)""")
-        .find(phone)
-    if (matchResult == null) return "" else {
-        country = matchResult.groupValues[1]
-        city = matchResult.groupValues[2]
-        number = matchResult.groupValues[3]
-    }
+    val matchResult = Regex("""(^\+[0-9]*)?( *\([0-9 -]*\))?([0-9 -]+)""")
+        .find(phone) ?: return ""
+    val country = matchResult.groupValues[1]
+    val city = matchResult.groupValues[2]
+    val number = matchResult.groupValues[3]
     if (country + city + number != phone) return ""
     var flag = false
     if (country != "") {
@@ -235,16 +230,16 @@ fun bestLongJump(jumps: String): Int {
     for (jump in attempts) {
         if (jump != "-" && jump != "%") {
             val length = checkNumber(jump)
-            if (length == -1) return -1 else if (length > result) result = length
+            if (length == null) return -1 else if (length > result) result = length
         }
     }
     return result
 }
 
-fun checkNumber(str: String): Int {
-    if (str == "") return -1
-    for (char in str) if (char !in "1234567890") return -1
-    return str.toInt()
+fun checkNumber(str: String): Int? {
+    if (str == "") return null
+    if (str[0] == '+' || str[0] == '-') return null
+    return str.toIntOrNull()
 }
 
 /**
@@ -262,14 +257,12 @@ fun bestHighJump(jumps: String): Int {
     val attempts = jumps.split(" ")
     if (attempts.size < 2) return -1
     var result = -1
-    for (i in attempts.indices) {
-        if (i % 2 == 0) {
-            val height = checkNumber(attempts[i])
-            val str = attempts[i + 1]
-            for (char in str) {
-                if (char !in "+-%") return -1
-                if (char == '+' && height > result) result = height
-            }
+    for (i in attempts.indices step 2) {
+        val height = checkNumber(attempts[i]) ?: return -1
+        val str = attempts[i + 1]
+        for (char in str) {
+            if (char !in "+-%") return -1
+            if (char == '+' && height > result) result = height
         }
     }
     return result
@@ -285,22 +278,14 @@ fun bestHighJump(jumps: String): Int {
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
 fun plusMinus(expression: String): Int {
-    fun check(str: String): Int {
-        if (str == "") throw IllegalArgumentException()
-        for (char in str) if (char !in "1234567890") throw IllegalArgumentException()
-        return str.toInt()
-    }
-
     val parts = expression.split(" ")
-    var result = check(parts[0])
-    for (i in parts.indices) {
-        if (i % 2 == 1) {
-            if (i == parts.size - 1) throw IllegalArgumentException()
-            when (parts[i]) {
-                "+" -> result += check(parts[i + 1])
-                "-" -> result -= check(parts[i + 1])
-                else -> throw IllegalArgumentException()
-            }
+    var result = checkNumber(parts[0]) ?: throw IllegalArgumentException()
+    for (i in 1 until parts.size step 2) {
+        if (i == parts.size - 1) throw IllegalArgumentException()
+        when (parts[i]) {
+            "+" -> result += checkNumber(parts[i + 1]) ?: throw IllegalArgumentException()
+            "-" -> result -= checkNumber(parts[i + 1]) ?: throw IllegalArgumentException()
+            else -> throw IllegalArgumentException()
         }
     }
     return result
@@ -321,11 +306,8 @@ fun firstDuplicateIndex(str: String): Int {
     var result = 0
     for (i in 1 until words.size) {
         if (words[i] == words[i - 1]) {
-            for (j in 0 until i - 1) {
-                result += words[j].length + 1
-            }
             return result
-        }
+        } else result += words[i - 1].length + 1
     }
     return -1
 }
@@ -372,18 +354,12 @@ fun fromRoman(roman: String): Int {
     if (roman == "") return -1
     if (roman.length == 1) return letters.getOrDefault(roman, -1)
     var i = 0
-    var flagPairBehind = false
     while (i < roman.length - 1) {
-        val pairWithNext = pairs[roman[i].toString() + roman[i + 1].toString()]
-        if (!flagPairBehind) {
-            result += pairWithNext ?: (letters[roman[i].toString()] ?: return -1)
-        }
-        if (flagPairBehind)
-            flagPairBehind = false else
-            if (pairWithNext != null) flagPairBehind = true
-        i++
+        val pairWithNext = pairs[roman.substring(i, i + 2)]
+        result += pairWithNext ?: (letters[roman[i].toString()] ?: return -1)
+        if (pairWithNext != null) i += 2 else i++
     }
-    if (!flagPairBehind) result += letters[roman[i].toString()] ?: return -1
+    if (i == roman.length - 1) result += letters[roman[i].toString()] ?: return -1
     return result
 }
 
@@ -441,7 +417,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
 
     val result = mutableListOf<Int>()
     for (i in 1..cells) result.add(0)
-    var current = if (cells % 2 == 0) cells / 2 else (cells - 1) / 2
+    var current = cells / 2
     var commandIndex = 0
     var count = 0
     while (count < limit) {
@@ -449,25 +425,21 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
         when (commands[commandIndex]) {
             '+' -> {
                 result[current]++
-                commandIndex++
             }
             '-' -> {
                 result[current]--
-                commandIndex++
             }
             '<' -> {
                 if (current == 0) throw IllegalStateException() else current--
-                commandIndex++
             }
             '>' -> {
                 if (current == cells - 1) throw IllegalStateException() else current++
-                commandIndex++
             }
-            '[' -> if (result[current] == 0) commandIndex = brackets[commandIndex]!! + 1 else commandIndex++
-            ']' -> if (result[current] != 0) commandIndex = brackets[commandIndex]!! + 1 else commandIndex++
-            else -> commandIndex++
+            '[' -> if (result[current] == 0) commandIndex = brackets[commandIndex]!!
+            ']' -> if (result[current] != 0) commandIndex = brackets[commandIndex]!!
         }
         count++
+        commandIndex++
     }
     return result
 }

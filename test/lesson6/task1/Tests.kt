@@ -88,6 +88,7 @@ class Tests {
         assertEquals(754, bestLongJump("700 717 707 % 754"))
         assertEquals(-1, bestLongJump("700 + 700"))
         assertEquals(-1, bestLongJump(""))
+        assertEquals(-1, bestLongJump("+200"))
 
     }
 
@@ -129,6 +130,7 @@ class Tests {
     @Tag("6")
     fun mostExpensive() {
         assertEquals("", mostExpensive(""))
+        assertEquals("", mostExpensive(" 15"))
         assertEquals("Курица", mostExpensive("Хлеб 39.9; Молоко 62.5; Курица 184.0; Конфеты 89.9"))
         assertEquals("Вино", mostExpensive("Вино 255.0"))
     }
@@ -149,11 +151,11 @@ class Tests {
     @Test
     @Tag("7")
     fun computeDeviceCells() {
+        assertEquals(listOf(1, 1, 1, 1, 1, 0, 0, 0, 0, 0), computeDeviceCells(10, "- <<<<< +[>+]", 10000))
         assertThrows(IllegalArgumentException::class.java) { computeDeviceCells(1, "]++-<---", 500) }
         assertEquals(listOf(0), computeDeviceCells(1, "", 500))
         assertEquals(listOf(0, 0, 0, 0, 0, 1, 1, 1, 1, 1), computeDeviceCells(10, "+>+>+>+>+", 10000))
         assertEquals(listOf(-1, -1, -1, -1, -1, 0, 0, 0, 0, 0), computeDeviceCells(10, "<-<-<-<-<-", 10000))
-        assertEquals(listOf(1, 1, 1, 1, 1, 0, 0, 0, 0, 0), computeDeviceCells(10, "- <<<<< +[>+]", 10000))
         assertEquals(
             listOf(0, 8, 7, 6, 5, 4, 3, 2, 1, 0, 0),
             computeDeviceCells(11, "<<<<< + >>>>>>>>>> --[<-] >+[>+] >++[--< <[<] >+[>+] >++]", 10000)
