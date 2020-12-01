@@ -188,11 +188,9 @@ fun flattenPhoneNumber(phone: String): String {
             if (char in digits) result.append(char)
         }
     }
-    if (number != "") {
-        Regex("""[0-9]+""").find(number) ?: return ""
-        for (char in number) {
-            if (char in digits) result.append(char)
-        }
+    Regex("""[0-9]+""").find(number) ?: return ""
+    for (char in number) {
+        if (char in digits) result.append(char)
     }
     return result.toString()
 }
