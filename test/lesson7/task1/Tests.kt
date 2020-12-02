@@ -10,6 +10,10 @@ class Tests {
     private fun assertFileContent(name: String, expectedContent: String) {
         val file = File(name)
         val content = file.readLines().joinToString("\n")
+        println(content)
+        println()
+        println(expectedContent)
+        println()
         assertEquals(expectedContent, content)
     }
 

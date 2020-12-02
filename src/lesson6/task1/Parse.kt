@@ -174,7 +174,7 @@ fun flattenPhoneNumber(phone: String): String {
     val digits = "1234567890"
     val result = StringBuilder()
 
-    val matchResult = Regex("""(^\+[0-9]+)?( *\([0-9 -]*\))?([0-9 -]+)""")
+    val matchResult = Regex("""(^\+[0-9]+)?( *\([0-9 -]*[0-9]+[[0-9 -]*]*\))?([0-9 -]*[0-9]+[[0-9 -]*]*)""")
         .find(phone) ?: return ""
     val country = matchResult.groupValues[1]
     val city = matchResult.groupValues[2]
@@ -182,13 +182,9 @@ fun flattenPhoneNumber(phone: String): String {
 
     if (country + city + number != phone) return ""
     result.append(country)
-    if (city != "") {
-        Regex("""[0-9]+""").find(city) ?: return ""
-        for (char in city) {
-            if (char in digits) result.append(char)
-        }
+    for (char in city) {
+        if (char in digits) result.append(char)
     }
-    Regex("""[0-9]+""").find(number) ?: return ""
     for (char in number) {
         if (char in digits) result.append(char)
     }
