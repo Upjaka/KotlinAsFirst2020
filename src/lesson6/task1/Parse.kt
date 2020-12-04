@@ -202,6 +202,7 @@ fun flattenPhoneNumber(phone: String): String {
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
 fun bestLongJump(jumps: String): Int {
+    if (Regex("""[+-][0-9]+""").find(jumps) != null) return -1
     val attempts = jumps.split(" ")
     var result = -1
     for (jump in attempts) {
