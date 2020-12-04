@@ -215,8 +215,7 @@ fun bestLongJump(jumps: String): Int {
 
 fun checkNumber(str: String): Int? {
     val result = str.toIntOrNull() ?: return null
-    if (result < 0) return null
-    return result
+    return if (result < 0) null else result
 }
 
 /**
