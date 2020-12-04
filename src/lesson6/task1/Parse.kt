@@ -214,9 +214,9 @@ fun bestLongJump(jumps: String): Int {
 }
 
 fun checkNumber(str: String): Int? {
-    if (str == "") return null
-    if (str[0] == '+' || str[0] == '-') return null
-    return str.toIntOrNull()
+    val result = str.toIntOrNull() ?: return null
+    if (result < 0) return null
+    return result
 }
 
 /**
@@ -256,9 +256,9 @@ fun bestHighJump(jumps: String): Int {
  */
 fun plusMinus(expression: String): Int {
     val parts = expression.split(" ")
+    if (parts.size % 2 == 0) throw IllegalArgumentException()
     var result = checkNumber(parts[0]) ?: throw IllegalArgumentException()
     for (i in 1 until parts.size step 2) {
-        if (i == parts.size - 1) throw IllegalArgumentException()
         when (parts[i]) {
             "+" -> result += checkNumber(parts[i + 1]) ?: throw IllegalArgumentException()
             "-" -> result -= checkNumber(parts[i + 1]) ?: throw IllegalArgumentException()
@@ -308,7 +308,7 @@ fun mostExpensive(description: String): String {
             val name = good.split(' ')[0]
             val cost = good.split(' ')[1].toDouble()
             if (cost >= result.second) result = Pair(name, cost)
-        }
+        } else return ""
     }
     return result.first
 }
