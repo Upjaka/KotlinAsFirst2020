@@ -207,16 +207,11 @@ fun bestLongJump(jumps: String): Int {
     var result = -1
     for (jump in attempts) {
         if (jump != "-" && jump != "%") {
-            val length = checkNumber(jump)
+            val length = jump.toIntOrNull()
             if (length == null) return -1 else if (length > result) result = length
         }
     }
     return result
-}
-
-fun checkNumber(str: String): Int? {
-    val result = str.toIntOrNull() ?: return null
-    return if (result < 0) null else result
 }
 
 /**
@@ -231,11 +226,12 @@ fun checkNumber(str: String): Int? {
  * вернуть -1.
  */
 fun bestHighJump(jumps: String): Int {
+    if (Regex("""[+-][0-9]+""").find(jumps) != null) return -1
     val attempts = jumps.split(" ")
     if (attempts.size < 2) return -1
     var result = -1
     for (i in attempts.indices step 2) {
-        val height = checkNumber(attempts[i]) ?: return -1
+        val height = attempts[i].toIntOrNull() ?: return -1
         val str = attempts[i + 1]
         for (char in str) {
             if (char !in "+-%") return -1
@@ -255,13 +251,14 @@ fun bestHighJump(jumps: String): Int {
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
 fun plusMinus(expression: String): Int {
+    if (Regex("""[+-][0-9]+""").find(expression) != null) throw IllegalArgumentException()
     val parts = expression.split(" ")
     if (parts.size % 2 == 0) throw IllegalArgumentException()
-    var result = checkNumber(parts[0]) ?: throw IllegalArgumentException()
+    var result = parts[0].toIntOrNull() ?: throw IllegalArgumentException()
     for (i in 1 until parts.size step 2) {
         when (parts[i]) {
-            "+" -> result += checkNumber(parts[i + 1]) ?: throw IllegalArgumentException()
-            "-" -> result -= checkNumber(parts[i + 1]) ?: throw IllegalArgumentException()
+            "+" -> result += parts[i + 1].toIntOrNull() ?: throw IllegalArgumentException()
+            "-" -> result -= parts[i + 1].toIntOrNull() ?: throw IllegalArgumentException()
             else -> throw IllegalArgumentException()
         }
     }
