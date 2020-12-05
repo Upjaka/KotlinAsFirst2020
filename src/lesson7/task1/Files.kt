@@ -2,7 +2,10 @@
 
 package lesson7.task1
 
+import lesson3.task1.digitNumber
 import java.io.File
+import java.lang.StringBuilder
+import java.util.*
 
 // Урок 7: работа с файлами
 // Урок интегральный, поэтому его задачи имеют сильно увеличенную стоимость
@@ -63,7 +66,14 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  * Подчёркивание в середине и/или в конце строк значения не имеет.
  */
 fun deleteMarked(inputName: String, outputName: String) {
-    TODO()
+    File(outputName).printWriter().use {
+        for (line in File(inputName).readLines()) {
+            if (line.isEmpty()) it.println() else
+                if (line[0] != '_') {
+                    it.println(line)
+                }
+        }
+    }
 }
 
 /**
@@ -76,7 +86,27 @@ fun deleteMarked(inputName: String, outputName: String) {
  *
  */
 fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
-    TODO()
+    val result = mutableMapOf<String, Int>()
+    val list = mutableListOf<String>()
+    for (str in substrings) {
+        result[str] = 0
+        list.add("")
+    }
+    for (char in File(inputName).readText().toLowerCase()) {
+        for (i in list.indices) {
+            val substring = substrings[i].toLowerCase()
+            when (char) {
+                substring[list[i].length].toLowerCase() -> list[i] += char.toString()
+                substring[0].toLowerCase() -> list[i] = char.toString()
+                else -> list[i] = ""
+            }
+            if (list[i] == substring) {
+                list[i] = if (substring.length > 1 && char == substring[0]) char.toString() else ""
+                result[substrings[i]] = result[substrings[i]]!! + 1
+            }
+        }
+    }
+    return result
 }
 
 
@@ -94,7 +124,18 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
  *
  */
 fun sibilants(inputName: String, outputName: String) {
-    TODO()
+    val consonants = "ЖжЧчШшЩщ"
+    val correctLetters = listOf("И", "А", "У", "и", "а", "у")
+    val wrongLetters = listOf('Ы', 'Я', 'Ю', 'ы', 'я', 'ю')
+    File(outputName).writer().use {
+        var lastChar = '.'
+        for (currentChar in File(inputName).readText()) {
+            if (currentChar in wrongLetters && lastChar in consonants) {
+                it.write(correctLetters[wrongLetters.indexOf(currentChar)])
+            } else it.write(currentChar.toString())
+            lastChar = currentChar
+        }
+    }
 }
 
 /**
@@ -115,7 +156,20 @@ fun sibilants(inputName: String, outputName: String) {
  *
  */
 fun centerFile(inputName: String, outputName: String) {
-    TODO()
+    val lines = File(inputName).readLines().map { it.trim() }
+    var maxLength = 0
+    for (line in lines) {
+        if (line.length > maxLength) maxLength = line.length
+    }
+    File(outputName).printWriter().use {
+        for (line in lines) {
+            val deltaLength = maxLength - line.length
+            for (i in 1..deltaLength / 2) {
+                it.print(' ')
+            }
+            it.println(line)
+        }
+    }
 }
 
 /**
@@ -146,7 +200,49 @@ fun centerFile(inputName: String, outputName: String) {
  * 8) Если входной файл удовлетворяет требованиям 1-7, то он должен быть в точности идентичен выходному файлу
  */
 fun alignFileByWidth(inputName: String, outputName: String) {
-    TODO()
+    val lines = File(inputName).readLines().map { it.trim() }
+    var maxLength = 0
+    for (line in lines) {
+        if (line.length > maxLength) maxLength = line.length
+    }
+
+    fun gaps(words: List<String>): List<String> {
+        val result = mutableListOf<String>()
+        var summaryLength = 0
+        val numberWhitespaces = words.size - 1
+        for (word in words) {
+            summaryLength += word.length
+        }
+        val deltaLength = maxLength - summaryLength
+        for (i in 1..numberWhitespaces) {
+            val size = if (i <= deltaLength % numberWhitespaces) deltaLength / numberWhitespaces + 1
+            else deltaLength / numberWhitespaces
+            val stringBuilder = StringBuilder()
+            for (j in 1..size) {
+                stringBuilder.append(' ')
+            }
+            result.add(stringBuilder.toString())
+        }
+        return result
+    }
+
+    File(outputName).printWriter().use {
+        for (line in lines) {
+            if (line == "") it.println() else {
+                val words = mutableListOf<String>()
+                for (str in line.split(' ')) {
+                    if (str != "") words.add(str)
+                }
+                if (words.size == 1) it.println(words.first()) else {
+                    val gaps = gaps(words)
+                    for (i in gaps.indices) {
+                        it.print(words[i] + gaps[i])
+                    }
+                    it.println(words.last())
+                }
+            }
+        }
+    }
 }
 
 /**
@@ -284,7 +380,68 @@ Suspendisse <s>et elit in enim tempus iaculis</s>.
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
-    TODO()
+    val printWriter = File(outputName).printWriter()
+    val stack = Stack<String>()
+    fun changeLineFormat(line: String): String {
+        val result = StringBuilder()
+        fun addRightSymbol(type: String) {
+            if (!stack.contains(type)) {
+                result.append("<$type>")
+                stack.push(type)
+            } else {
+                result.append("</$type>")
+                stack.remove(type)
+            }
+        }
+
+        var index = 0
+        while (index < line.length - 1) {
+            when (line.substring(index, index + 2)) {
+                "**" -> {
+                    addRightSymbol("b")
+                    index++
+                }
+                "~~" -> {
+                    addRightSymbol("s")
+                    index++
+                }
+                else -> {
+                    if (line[index] == '*') {
+                        addRightSymbol("i")
+                    } else {
+                        result.append(line[index])
+                    }
+                }
+            }
+            index++
+        }
+        if (line.last() == '*') {
+            addRightSymbol("i")
+        } else {
+            result.append(line.last())
+        }
+        return result.toString()
+    }
+
+    printWriter.use {
+        it.println("<html>\n<body>")
+        for (line in File(inputName).readLines()) {
+            if (line == "") {
+                it.println("</p>")
+                stack.remove("p")
+            } else {
+                if (!stack.contains("p")) {
+                    it.println("<p>")
+                    stack.push("p")
+                }
+                it.println(changeLineFormat(line))
+            }
+        }
+        if (stack.contains("p")) {
+            it.println("</p>")
+        }
+        it.println("</body>\n</html>")
+    }
 }
 
 /**
@@ -451,6 +608,53 @@ fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
  *
  */
 fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
-    TODO()
+    val printWriter = File(outputName).printWriter()
+    fun printSpaces(number: Int) {
+        for (i in 1..number) printWriter.print(" ")
+    }
+
+    fun printDash(number: Int) {
+        for (i in 1..number) printWriter.print("-")
+    }
+
+    var result = lhv / rhv
+    var remained = lhv - rhv * result
+    val divisionProcess = mutableListOf<Int>()
+    for (i in digitNumber(result) downTo 1) {
+        divisionProcess.add(result % 10 * rhv)
+        divisionProcess.add(result % 10 * rhv + remained)
+        remained = divisionProcess.last() / 10
+        result /= 10
+    }
+    divisionProcess.removeLast()
+    divisionProcess.reverse()
+
+    printWriter.use {
+        val firstLine = " $lhv | $rhv"
+        it.println(firstLine)
+        it.print("-${divisionProcess[0]}")
+        printSpaces(firstLine.length - digitNumber(divisionProcess[0]) - digitNumber(rhv) - 1)
+        it.println(lhv / rhv)
+        var indexLastDigit = digitNumber(divisionProcess[0]) + 1
+        printDash(indexLastDigit)
+        it.println()
+        for (i in 1 until divisionProcess.size) {
+            val digitNumber = digitNumber(divisionProcess[i])
+            if (i % 2 == 1) {
+                if (divisionProcess[i] > 10) printSpaces(indexLastDigit - digitNumber + 1) else
+                    printSpaces(indexLastDigit - digitNumber)
+                it.println(String.format("%02d", divisionProcess[i]))
+            } else {
+                printSpaces(indexLastDigit - digitNumber)
+                it.println("-${divisionProcess[i]}")
+                printSpaces(indexLastDigit - digitNumber)
+                printDash(digitNumber + 1)
+                it.println()
+                indexLastDigit++
+            }
+        }
+        printSpaces(indexLastDigit - 1)
+        it.print("${lhv % rhv}")
+    }
 }
 
