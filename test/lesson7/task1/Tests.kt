@@ -392,6 +392,9 @@ Basic, Ruby, Swift.
             File("temp.txt").delete()
         }
 
+        test(16,
+            9,
+            "16 | 9\n-9   1\n--\n 7")
         test(39096,
             2,
             " 39096 | 2\n-2       19548\n--\n 19\n-18\n---\n  10\n -10\n ---\n   09\n   -8\n   --\n    16\n   -16\n   ---\n     0")

@@ -3,6 +3,8 @@
 package lesson7.task1
 
 import lesson3.task1.digitNumber
+import lesson3.task1.getLeftDigit
+import lesson3.task1.getRightDigit
 import java.io.File
 import java.lang.StringBuilder
 import java.util.*
@@ -614,8 +616,9 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
         for (i in 1..number) printWriter.print(" ")
     }
 
-    fun printDash(number: Int) {
+    fun printlnDash(number: Int) {
         for (i in 1..number) printWriter.print("-")
+        printWriter.println()
     }
 
     var result = lhv / rhv
@@ -631,26 +634,25 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
     divisionProcess.reverse()
 
     printWriter.use {
-        val firstLine = " $lhv | $rhv"
+        val subtrahend = divisionProcess[0]
+        val firstLine =
+            if (getLeftDigit(lhv, 1) < getLeftDigit(subtrahend, 1)) "$lhv | $rhv" else " $lhv | $rhv"
         it.println(firstLine)
-        it.print("-${divisionProcess[0]}")
-        printSpaces(firstLine.length - digitNumber(divisionProcess[0]) - digitNumber(rhv) - 1)
+        it.print("-$subtrahend")
+        printSpaces(firstLine.length - digitNumber(subtrahend) - digitNumber(rhv) - 1)
         it.println(lhv / rhv)
-        var indexLastDigit = digitNumber(divisionProcess[0]) + 1
-        printDash(indexLastDigit)
-        it.println()
+        var indexLastDigit = digitNumber(subtrahend) + 1
+        printlnDash(indexLastDigit)
         for (i in 1 until divisionProcess.size) {
             val digitNumber = digitNumber(divisionProcess[i])
+            printSpaces(indexLastDigit - digitNumber)
             if (i % 2 == 1) {
-                if (divisionProcess[i] >= 10) printSpaces(indexLastDigit - digitNumber + 1) else
-                    printSpaces(indexLastDigit - digitNumber)
+                if (divisionProcess[i] >= 10) printSpaces(1)
                 it.println(String.format("%02d", divisionProcess[i]))
             } else {
-                printSpaces(indexLastDigit - digitNumber)
                 it.println("-${divisionProcess[i]}")
                 printSpaces(indexLastDigit - digitNumber)
-                printDash(digitNumber + 1)
-                it.println()
+                printlnDash(digitNumber + 1)
                 indexLastDigit++
             }
         }

@@ -226,7 +226,7 @@ fun revert(n: Int): Int {
  */
 fun isPalindrome(n: Int): Boolean = n == revert(n)
 
-fun getDigit(number: Int, index: Int): Int {
+fun getRightDigit(number: Int, index: Int): Int {
     var n = number
     for (i in 1 until index) {
         n /= 10
@@ -246,7 +246,7 @@ fun hasDifferentDigits(n: Int): Boolean {
     val firstDigit = n % 10
     val digitNumber = digitNumber(n)
     for (i in 2..digitNumber) {
-        val digit = getDigit(n, i)
+        val digit = getRightDigit(n, i)
         if (digit != firstDigit) return true
     }
     return false
@@ -310,13 +310,13 @@ fun squareSequenceDigit(n: Int): Int {
     while (sequenceLength < n) {
         square = sqr(++index)
         if (sequenceLength + digitNumber(square) > n)
-            return getDigitReverse(square, n - sequenceLength)
+            return getLeftDigit(square, n - sequenceLength)
         sequenceLength += digitNumber(square)
     }
     return square % 10
 }
 
-fun getDigitReverse(number: Int, index: Int): Int = getDigit(number, digitNumber(number) - index + 1)
+fun getLeftDigit(number: Int, index: Int): Int = getRightDigit(number, digitNumber(number) - index + 1)
 
 fun intPow(number: Int, degree: Int): Int {
     return if (degree == 0) 1
@@ -349,7 +349,7 @@ fun fibSequenceDigit(n: Int): Int {
         var nextNumber = number1 + number2
         while (sequenceLength < n) {
             nextNumber = number1 + number2
-            if (sequenceLength + digitNumber(nextNumber) > n) return getDigitReverse(nextNumber, n - sequenceLength)
+            if (sequenceLength + digitNumber(nextNumber) > n) return getLeftDigit(nextNumber, n - sequenceLength)
             else {
                 sequenceLength += digitNumber(nextNumber)
                 number1 = number2
