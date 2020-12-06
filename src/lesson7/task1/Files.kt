@@ -436,8 +436,10 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
         it.println("<html>\n<body>")
         for (line in File(inputName).readLines()) {
             if (line == "") {
-                it.println("</p>")
-                stack.remove("p")
+                if (stack.contains("p")) {
+                    it.println("</p>")
+                    stack.remove("p")
+                }
             } else {
                 if (!stack.contains("p")) {
                     it.println("<p>")
