@@ -4,8 +4,8 @@ package lesson7.task1
 
 import lesson3.task1.digitNumber
 import lesson3.task1.getLeftDigit
-import lesson3.task1.getRightDigit
 import java.io.File
+import java.lang.Integer.max
 import java.lang.StringBuilder
 import java.util.*
 
@@ -88,6 +88,11 @@ fun deleteMarked(inputName: String, outputName: String) {
  *
  */
 fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
+    fun consistsOfOneLetter(string: String): Boolean {
+        for (i in 1 until string.length) if (string[i] != string[0]) return false
+        return true
+    }
+
     val substr = substrings.toSet().toList()
     val result = mutableMapOf<String, Int>()
     val list = mutableListOf<String>()
@@ -99,8 +104,9 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
         for (i in list.indices) {
             val substring = substr[i].toLowerCase()
             when (char) {
-                substring[list[i].length].toLowerCase() -> list[i] += char.toString()
-                substring[0].toLowerCase() -> list[i] = char.toString()
+                substring[list[i].length] -> list[i] += char.toString()
+                substring[0] -> if (list.isEmpty()) list[i] = char.toString() else
+                    if (!consistsOfOneLetter(list[i])) list[i] = ""
                 else -> list[i] = ""
             }
             if (list[i] == substring) {
@@ -634,25 +640,34 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
     divisionProcess.reverse()
 
     printWriter.use {
+        var indexLastDigit: Int
         val subtrahend = divisionProcess[0]
-        val firstLine =
-            if (getLeftDigit(lhv, 1) < getLeftDigit(subtrahend, 1)) "$lhv | $rhv" else " $lhv | $rhv"
-        it.println(firstLine)
-        it.print("-$subtrahend")
-        printSpaces(firstLine.length - digitNumber(subtrahend) - digitNumber(rhv) - 1)
-        it.println(lhv / rhv)
-        var indexLastDigit = digitNumber(subtrahend) + 1
+        if (subtrahend == 0) {
+            if (digitNumber(lhv) > 1) it.println("$lhv | $rhv") else
+                it.println(" $lhv | $rhv")
+            printSpaces(digitNumber(lhv) - 2)
+            it.println("-0   0")
+            indexLastDigit = max(digitNumber(lhv), 2)
+        } else {
+            val firstLine =
+                if (getLeftDigit(lhv, 1) < getLeftDigit(subtrahend, 1)) "$lhv | $rhv" else " $lhv | $rhv"
+            it.println(firstLine)
+            it.print("-$subtrahend")
+            printSpaces(firstLine.length - digitNumber(subtrahend) - digitNumber(rhv) - 1)
+            it.println(lhv / rhv)
+            indexLastDigit = digitNumber(subtrahend) + 1
+        }
         printlnDash(indexLastDigit)
         for (i in 1 until divisionProcess.size) {
-            val digitNumber = digitNumber(divisionProcess[i])
+            var digitNumber = digitNumber(divisionProcess[i])
             printSpaces(indexLastDigit - digitNumber)
-            if (i % 2 == 1) {
+            if (i % 2 == 1) { // divisionProcess[i] - уменьшаемое
                 if (divisionProcess[i] >= 10) printSpaces(1)
                 it.println(String.format("%02d", divisionProcess[i]))
-            } else {
+            } else { // divisionProcess[i] - вычитаемое
                 it.println("-${divisionProcess[i]}")
-                printSpaces(indexLastDigit - digitNumber)
-                printlnDash(digitNumber + 1)
+                printSpaces(indexLastDigit + 1 - max(digitNumber + 1, digitNumber(divisionProcess[i - 1])))
+                printlnDash(max(digitNumber + 1, digitNumber(divisionProcess[i - 1])))
                 indexLastDigit++
             }
         }
