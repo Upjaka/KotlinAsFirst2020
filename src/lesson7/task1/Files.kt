@@ -659,7 +659,7 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
         }
         printlnDash(indexLastDigit)
         for (i in 1 until divisionProcess.size) {
-            var digitNumber = digitNumber(divisionProcess[i])
+            val digitNumber = digitNumber(divisionProcess[i])
             printSpaces(indexLastDigit - digitNumber)
             if (i % 2 == 1) { // divisionProcess[i] - уменьшаемое
                 if (divisionProcess[i] >= 10) printSpaces(1)
