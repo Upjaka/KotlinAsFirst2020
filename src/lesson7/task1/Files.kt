@@ -656,8 +656,9 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
                 indexLastDigit++
             }
         }
-        printSpaces(indexLastDigit - 1)
-        it.print("${lhv % rhv}")
+        remained = lhv % rhv
+        printSpaces(indexLastDigit - digitNumber(remained))
+        it.print("$remained")
     }
 }
 
