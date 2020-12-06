@@ -88,7 +88,7 @@ fun deleteMarked(inputName: String, outputName: String) {
 fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
     val result = mutableMapOf<String, Int>()
     val list = mutableListOf<String>()
-    for (str in substrings) {
+    for (str in substrings.toSet()) {
         result[str] = 0
         list.add("")
     }
@@ -641,7 +641,7 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
         for (i in 1 until divisionProcess.size) {
             val digitNumber = digitNumber(divisionProcess[i])
             if (i % 2 == 1) {
-                if (divisionProcess[i] > 10) printSpaces(indexLastDigit - digitNumber + 1) else
+                if (divisionProcess[i] >= 10) printSpaces(indexLastDigit - digitNumber + 1) else
                     printSpaces(indexLastDigit - digitNumber)
                 it.println(String.format("%02d", divisionProcess[i]))
             } else {

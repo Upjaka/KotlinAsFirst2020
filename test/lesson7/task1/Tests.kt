@@ -75,10 +75,6 @@ Basic, Ruby, Swift.
     @Tag("14")
     fun countSubstrings() {
         assertEquals(
-            mapOf("Карминовый" to 1, "Боязливый" to 1, "грут" to 0),
-            countSubstrings("input/substrings_myIn.txt", listOf("Карминовый", "Боязливый", "грут"))
-        )
-        assertEquals(
             mapOf("РАЗНЫЕ" to 2, "ные" to 2, "Неряшливость" to 1, "е" to 49, "эволюция" to 0),
             countSubstrings("input/substrings_in1.txt", listOf("РАЗНЫЕ", "ные", "Неряшливость", "е", "эволюция"))
         )
@@ -89,6 +85,10 @@ Basic, Ruby, Swift.
         assertEquals(
             mapOf("--" to 4, "ее" to 2, "животное" to 2, "." to 2),
             countSubstrings("input/substrings_in2.txt", listOf("--", "ее", "животное", "."))
+        )
+        assertEquals(
+            mapOf("ба" to 2),
+            countSubstrings("input/substrings_myIn.txt", listOf("ба", "ба"))
         )
     }
 
@@ -392,6 +392,9 @@ Basic, Ruby, Swift.
             File("temp.txt").delete()
         }
 
+        test(39096,
+            2,
+            " 39096 | 2\n-2       19548\n--\n 19\n-18\n---\n  10\n -10\n ---\n   09\n   -8\n   --\n    16\n   -16\n   ---\n     0")
         test(
             19935,
             22,
