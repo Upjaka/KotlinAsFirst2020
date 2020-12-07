@@ -451,18 +451,23 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
 
     printWriter.use {
         it.println("<html>\n<body>")
-        for (line in File(inputName).readLines()) {
-            if (line == "") {
-                if (stack.contains("p")) {
-                    it.println("</p>")
-                    stack.remove("p")
+        val lines = File(inputName).readLines()
+        if (lines.isEmpty()) {
+            it.print("<p>\n</p>")
+        } else {
+            for (line in lines) {
+                if (line == "") {
+                    if (stack.contains("p")) {
+                        it.println("</p>")
+                        stack.remove("p")
+                    }
+                } else {
+                    if (!stack.contains("p")) {
+                        it.println("<p>")
+                        stack.push("p")
+                    }
+                    it.println(changeLineFormat(line))
                 }
-            } else {
-                if (!stack.contains("p")) {
-                    it.println("<p>")
-                    stack.push("p")
-                }
-                it.println(changeLineFormat(line))
             }
         }
         if (stack.contains("p")) {
