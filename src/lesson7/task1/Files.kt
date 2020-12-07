@@ -439,10 +439,12 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
             }
             index++
         }
-        if (line.last() == '*') {
-            addRightSymbol("i")
-        } else {
-            result.append(line.last())
+        if (index == line.length - 1) {
+            if (line.last() == '*') {
+                addRightSymbol("i")
+            } else {
+                result.append(line.last())
+            }
         }
         return result.toString()
     }

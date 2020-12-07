@@ -74,11 +74,10 @@ Basic, Ruby, Swift.
     @Test
     @Tag("14")
     fun countSubstrings() {
-        /*assertEquals(
+        assertEquals(
             mapOf("abac" to 1),
             countSubstrings("input/substrings_myIn2", listOf("abac"))
         )
-         */
         assertEquals(
             mapOf("аааабббаа" to 1, "бба" to 3, "ЭвбабаГва" to 2, "есм" to 1, "баба" to 3),
             countSubstrings("input/substrings_myIn1.txt", listOf("аааабббаа", "бба", "ЭвбабаГва", "есм", "баба"))
@@ -266,12 +265,49 @@ Basic, Ruby, Swift.
         File("temp.html").delete()
     }
 
+    private fun checkHtmlSimpleExample1() {
+        val result = File("temp.html").readText().replace(Regex("[\\s\\n\\t]"), "")
+        val expected =
+            """
+                    <html>
+                        <body>
+                            <p>
+                                RI<s>R</s>mW@<s><b>5q<i>i}</i>:A</b>y=\"'<i></i>U</s>K<b>d<i>x9a<s>m</s></i>0lP<s>#]</s>(<s>b</s>#${'$'}<s>/<i>.</i>Bov<i>cu{Ca`</i>aJ<i>6BI</i>${'$'}2%3</s>bwc1%V`2</b><b>B<i>7is<s>SN</s>]</i>8P</b>-Q8WV|J</p><p>41l}T]Pc^A\\${'$'}4UT&N1|WwmgX<i>(</i>R'|9&:gp3m`X\"<s>12;u4!WB+p@smvnTkXY=f{J\"6^]A&(_}}a{F97{uIJEMov&xk&|W3&j6xmm37,['Z<i>^2/YD%K78%XYySpu^5'?])t8`Ye#a4_,odauF</i>QGF':Hv<i>tjXEnS?@WXJycGdS?i0etF&U?A,0a=J?@%L[HPkU`#Z&:b${'$'}Rb</i>9vXe4qo=(JM_Thy]CvRf71/[8rDK{^m1<i>TNq</i>C85xk\\e7#m\"r</s>X7Ja5?I<i>`</i>zdv<i>_`v<b>kAq{M)<s>PlLN</s>B,p.kNuvZU${"$"}SK=a</b>b`i</i><i>B\\zDmLL+<s>d</s>g.Lq<s>+HJ&<b>w</b>GzZ`6</s>L<s>s</s>)</i>AiTi-\"<s>fwm</s>NX<i>9lFYuIThrk!H\"<b>1MoXq&<s>k%vZ</s></b>S@N'HltHAe</i>y/8\"'f30R<i>l</i>j<i>GZ_</i>p<s></s>D/\"z;[}<s>E</s>+I<s></s>{S.4<b>CAfJ<i>a_Q/_</i><s>So2e(^!<i>nDA</i>a<i>Hd</i>tal<i>oJ9@eE</i>\":[{x</s>_</b>mChQ:<i>2;zHN<b></b>@n<s>Aj'Y!tGX/<b>+</b>@D?Up)U\"</s>.`3r</i><s>-<i>Pu</i>4}<i>L\\V<b></b>)Q<b>F}:}(iSi</b>2</i>G</s>TbU9<i>8!</i>-<s>n</s>/<b>X</b><s>s<b>l:</b><i>y<b>NX'f</b>!U}<b>G(\"h</b>u<b>K</b></i>#.<b><i>F5SFa</i>_\\o<i></i>,d</b>7=</s>iG,DXHHbvI@<s>bRb${'$'}^<i><b></b><b>F</b>A`W</i>:_</s>T<s><b>g<i>G_</i>ElD9b)]</b></s><i>P?c1kj<b>${'$'}atG</b>a<s>p]<b>&X</b>w89</s></i>9<i>^</i>?#,M<b>n)GQ|[[)P<i>8J^\\]a'ax_gQb<s>U3B4Y5`^</s>aGz4L((\\uNLhJhscy:/;hAlW%g9T8,\"/\\a(WRR\\</i>tf{j1)l</b>X3{_,^S=%5/P!H^
+                            </p>
+                        </body>
+                    </html>
+                    """.trimIndent().replace(Regex("[\\s\\n\\t]"), "")
+        assertEquals(expected, result)
+
+        File("temp.html").delete()
+    }
+
+    private fun checkHtmlSimpleExample2() {
+        val result = File("temp.html").readText().replace(Regex("[\\s\\n\\t]"), "")
+        val expected =
+            """
+                    <html>
+                        <body>
+                            <p>
+                                <s>D/\"z;[}</s>E<s>+I</s>
+                            </p>
+                        </body>
+                    </html>
+                    """.trimIndent().replace(Regex("[\\s\\n\\t]"), "")
+        assertEquals(expected, result)
+
+        File("temp.html").delete()
+    }
+
     @Test
     @Tag("22")
     fun markdownToHtmlSimple() {
+        markdownToHtmlSimple("input/markdown_simple2.txt", "temp.html")
+        checkHtmlSimpleExample2()
         markdownToHtmlSimple("input/markdown_simple.md", "temp.html")
         checkHtmlSimpleExample()
-        markdownToHtmlSimple("input/markdown_simple1.md", "temp.html")
+        markdownToHtmlSimple("input/markdown_simple1.txt", "temp.html")
+        checkHtmlSimpleExample1()
     }
 
     private fun checkHtmlListsExample() {
