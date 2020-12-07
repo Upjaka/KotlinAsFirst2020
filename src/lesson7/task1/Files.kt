@@ -70,10 +70,9 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
 fun deleteMarked(inputName: String, outputName: String) {
     File(outputName).printWriter().use {
         for (line in File(inputName).readLines()) {
-            if (line.isEmpty()) it.println() else
-                if (line[0] != '_') {
-                    it.println(line)
-                }
+            if (line.isEmpty() || line[0] != '_') {
+                it.println(line)
+            }
         }
     }
 }
@@ -88,30 +87,47 @@ fun deleteMarked(inputName: String, outputName: String) {
  *
  */
 fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
-    fun consistsOfOneLetter(string: String): Boolean {
-        for (i in 1 until string.length) if (string[i] != string[0]) return false
-        return true
-    }
-
-    val substr = substrings.toSet().toList()
     val result = mutableMapOf<String, Int>()
-    val list = mutableListOf<String>()
-    for (str in substr) {
-        result[str] = 0
-        list.add("")
+    val lowerToSubstrings = mutableMapOf<String, MutableList<String>>()
+    val partSubstringInText = mutableMapOf<String, String>()
+    for (lowSub in substrings.map { it.toLowerCase() }.toSet()) {
+        partSubstringInText[lowSub] = ""
+        lowerToSubstrings[lowSub] = mutableListOf()
+        for (sub in substrings.toSet()) {
+            if (sub.toLowerCase() == lowSub) lowerToSubstrings[lowSub]!!.add(sub)
+        }
+    }
+    for (sub in substrings.toSet()) {
+        result[sub] = 0
     }
     for (char in File(inputName).readText().toLowerCase()) {
-        for (i in list.indices) {
-            val substring = substr[i].toLowerCase()
+        for (sub in lowerToSubstrings.keys) {
+            val part = partSubstringInText[sub]!!
             when (char) {
-                substring[list[i].length] -> list[i] += char.toString()
-                substring[0] -> if (list.isEmpty()) list[i] = char.toString() else
-                    if (!consistsOfOneLetter(list[i])) list[i] = ""
-                else -> list[i] = ""
+                sub[part.length] -> partSubstringInText[sub] = part + char
+                sub[0] -> if (part.isEmpty()) {
+                    partSubstringInText[sub] = char.toString()
+                } else
+                    if (part != part.substring(1) + char)
+                        partSubstringInText[sub] = ""
+                else -> {
+                    if (part != "") {
+                        val charIndexInPart = part.indexOf(char)
+                        if (charIndexInPart == -1) partSubstringInText[sub] = "" else {
+                            val firstSubstring = part.substringBefore(char) + char
+                            val secondSubstring = part.substring(part.length - charIndexInPart) + char
+                            if (firstSubstring == secondSubstring) partSubstringInText[sub] = firstSubstring else {
+                                partSubstringInText[sub] = ""
+                            }
+                        }
+                    }
+                }
             }
-            if (list[i] == substring) {
-                list[i] = if (substring.length > 1 && char == substring[0]) char.toString() else ""
-                result[substr[i]] = result[substr[i]]!! + 1
+            if (partSubstringInText[sub] == sub) {
+                partSubstringInText[sub] = if (sub.length > 1 && char == sub[0]) char.toString() else ""
+                for (substring in lowerToSubstrings[sub]!!) {
+                    result[substring] = result[substring]!! + 1
+                }
             }
         }
     }
@@ -134,13 +150,12 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
  */
 fun sibilants(inputName: String, outputName: String) {
     val consonants = "ЖжЧчШшЩщ"
-    val correctLetters = listOf("И", "А", "У", "и", "а", "у")
-    val wrongLetters = listOf('Ы', 'Я', 'Ю', 'ы', 'я', 'ю')
+    val wrongToCorrect = mapOf('Ы' to "И", 'Я' to "А", 'Ю' to "У", 'ы' to "и", 'я' to "а", 'ю' to "у")
     File(outputName).writer().use {
         var lastChar = '.'
         for (currentChar in File(inputName).readText()) {
-            if (currentChar in wrongLetters && lastChar in consonants) {
-                it.write(correctLetters[wrongLetters.indexOf(currentChar)])
+            if (currentChar in wrongToCorrect.keys && lastChar in consonants) {
+                it.write(wrongToCorrect[currentChar]!!)
             } else it.write(currentChar.toString())
             lastChar = currentChar
         }

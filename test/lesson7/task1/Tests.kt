@@ -74,6 +74,11 @@ Basic, Ruby, Swift.
     @Test
     @Tag("14")
     fun countSubstrings() {
+        /*assertEquals(
+            mapOf("abac" to 1),
+            countSubstrings("input/substrings_myIn2", listOf("abac"))
+        )
+         */
         assertEquals(
             mapOf("аааабббаа" to 1, "бба" to 3, "ЭвбабаГва" to 2, "есм" to 1, "баба" to 3),
             countSubstrings("input/substrings_myIn1.txt", listOf("аааабббаа", "бба", "ЭвбабаГва", "есм", "баба"))
@@ -266,6 +271,7 @@ Basic, Ruby, Swift.
     fun markdownToHtmlSimple() {
         markdownToHtmlSimple("input/markdown_simple.md", "temp.html")
         checkHtmlSimpleExample()
+        markdownToHtmlSimple("input/markdown_simple1.md", "temp.html")
     }
 
     private fun checkHtmlListsExample() {
