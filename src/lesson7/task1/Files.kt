@@ -70,7 +70,7 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
 fun deleteMarked(inputName: String, outputName: String) {
     File(outputName).printWriter().use {
         for (line in File(inputName).readLines()) {
-            if (line.isEmpty() || line[0] != '_') {
+            if (line.startsWith('_')) {
                 it.println(line)
             }
         }
@@ -87,50 +87,32 @@ fun deleteMarked(inputName: String, outputName: String) {
  *
  */
 fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
+    val text = File(inputName).readText().toLowerCase()
     val result = mutableMapOf<String, Int>()
-    val lowerToSubstrings = mutableMapOf<String, MutableList<String>>()
-    val partSubstringInText = mutableMapOf<String, String>()
-    for (lowSub in substrings.map { it.toLowerCase() }.toSet()) {
-        partSubstringInText[lowSub] = ""
-        lowerToSubstrings[lowSub] = mutableListOf()
-        for (sub in substrings.toSet()) {
-            if (sub.toLowerCase() == lowSub) lowerToSubstrings[lowSub]!!.add(sub)
-        }
-    }
+    val lowerToSubstrings = mutableMapOf<String, Pair<Int, MutableList<String>>>()
+
     for (sub in substrings.toSet()) {
-        result[sub] = 0
+        val lowSub = sub.toLowerCase()
+        if (lowerToSubstrings[lowSub] == null) {
+            lowerToSubstrings[lowSub] = Pair(0, mutableListOf(sub))
+        } else {
+            lowerToSubstrings[lowSub]!!.second.add(sub)
+        }
     }
-    for (char in File(inputName).readText().toLowerCase()) {
-        for (sub in lowerToSubstrings.keys) {
-            val part = partSubstringInText[sub]!!
-            when (char) {
-                sub[part.length] -> partSubstringInText[sub] = part + char
-                sub[0] -> if (part.isEmpty()) {
-                    partSubstringInText[sub] = char.toString()
-                } else
-                    if (part != part.substring(1) + char)
-                        partSubstringInText[sub] = ""
-                else -> {
-                    if (part != "") {
-                        val charIndexInPart = part.indexOf(char)
-                        if (charIndexInPart == -1) partSubstringInText[sub] = "" else {
-                            val firstSubstring = part.substringBefore(char) + char
-                            val secondSubstring = part.substring(part.length - charIndexInPart) + char
-                            if (firstSubstring == secondSubstring) partSubstringInText[sub] = firstSubstring else {
-                                partSubstringInText[sub] = ""
-                            }
-                        }
-                    }
-                }
-            }
-            if (partSubstringInText[sub] == sub) {
-                partSubstringInText[sub] = if (sub.length > 1 && char == sub[0]) char.toString() else ""
-                for (substring in lowerToSubstrings[sub]!!) {
-                    result[substring] = result[substring]!! + 1
-                }
+    for (i in text.indices) {
+        for (lowSub in lowerToSubstrings.keys) {
+            if (text.startsWith(lowSub, i)) {
+                val pair = lowerToSubstrings[lowSub]!!
+                lowerToSubstrings[lowSub] = Pair(pair.first + 1, pair.second)
             }
         }
     }
+    for ((count, list) in lowerToSubstrings.values) {
+        for (string in list) {
+            result[string] = count
+        }
+    }
+
     return result
 }
 
@@ -406,47 +388,42 @@ Suspendisse <s>et elit in enim tempus iaculis</s>.
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
     val printWriter = File(outputName).printWriter()
     val stack = Stack<String>()
-    fun changeLineFormat(line: String): String {
-        val result = StringBuilder()
-        fun addRightSymbol(type: String) {
-            if (!stack.contains(type)) {
-                result.append("<$type>")
-                stack.push(type)
+    fun printHtmlLine(line: String) {
+        val toHtml = mapOf("**" to "b", "~~" to "s", "*" to "i")
+        var index = 0
+
+        fun printHtmlTag(key: String) {
+            if (key in stack) {
+                printWriter.print("</${toHtml[key]}>")
+                stack.remove(key)
             } else {
-                result.append("</$type>")
-                stack.remove(type)
+                printWriter.print("<${toHtml[key]}>")
+                stack.push(key)
             }
+            index += key.length
         }
 
-        var index = 0
         while (index < line.length - 1) {
-            when (line.substring(index, index + 2)) {
-                "**" -> {
-                    addRightSymbol("b")
-                    index++
-                }
-                "~~" -> {
-                    addRightSymbol("s")
-                    index++
-                }
-                else -> {
-                    if (line[index] == '*') {
-                        addRightSymbol("i")
-                    } else {
-                        result.append(line[index])
-                    }
-                }
-            }
-            index++
-        }
-        if (index == line.length - 1) {
-            if (line.last() == '*') {
-                addRightSymbol("i")
+            var key = line.substring(index..index + 1)
+            if (key in toHtml.keys) {
+                printHtmlTag(key)
             } else {
-                result.append(line.last())
+                key = line[index].toString()
+                if (key in toHtml.keys) {
+                    printHtmlTag(key)
+                } else {
+                    printWriter.print(line[index++])
+                }
             }
         }
-        return result.toString()
+        if (index == line.lastIndex) {
+            if (line.last() == '*') {
+                printHtmlTag("*")
+            } else {
+                printWriter.println(line[index])
+            }
+        }
+        printWriter.println()
     }
 
     printWriter.use {
@@ -466,7 +443,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
                         it.println("<p>")
                         stack.push("p")
                     }
-                    it.println(changeLineFormat(line))
+                    printHtmlLine(line)
                 }
             }
         }
