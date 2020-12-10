@@ -70,7 +70,7 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
 fun deleteMarked(inputName: String, outputName: String) {
     File(outputName).printWriter().use {
         for (line in File(inputName).readLines()) {
-            if (line.startsWith('_')) {
+            if (!line.startsWith('_')) {
                 it.println(line)
             }
         }
