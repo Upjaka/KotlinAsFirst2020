@@ -428,12 +428,11 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
 
     printWriter.use {
         it.println("<html>\n<body>")
-        val lines = File(inputName).readLines()
-        if (lines.isEmpty()) {
+        if (File(inputName).readText().trimIndent().isEmpty()) {
             it.print("<p>\n</p>")
         } else {
-            for (line in lines) {
-                if (line.trim() == "") {
+            for (line in File(inputName).readLines()) {
+                if (line.trimIndent() == "") {
                     if ("p" in stack) {
                         it.println("</p>")
                         stack.remove("p")
