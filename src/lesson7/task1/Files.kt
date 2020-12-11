@@ -433,7 +433,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
             it.print("<p>\n</p>")
         } else {
             for (line in lines) {
-                if (line == "") {
+                if (line.trim() == "") {
                     if ("p" in stack) {
                         it.println("</p>")
                         stack.remove("p")
