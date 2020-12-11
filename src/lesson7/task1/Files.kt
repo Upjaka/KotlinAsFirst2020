@@ -409,7 +409,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
                 printHtmlTag(key)
             } else {
                 key = line[index].toString()
-                if (key in toHtml.keys) {
+                if (key == "*") {
                     printHtmlTag(key)
                 } else {
                     printWriter.print(line[index++])
@@ -434,12 +434,12 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
         } else {
             for (line in lines) {
                 if (line == "") {
-                    if (stack.contains("p")) {
+                    if ("p" in stack) {
                         it.println("</p>")
                         stack.remove("p")
                     }
                 } else {
-                    if (!stack.contains("p")) {
+                    if ("p" !in stack) {
                         it.println("<p>")
                         stack.push("p")
                     }
